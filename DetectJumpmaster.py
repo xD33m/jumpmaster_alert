@@ -12,8 +12,7 @@ load_dotenv()
 
 # https://stackoverflow.com/a/474543
 s = sched.scheduler(time.time, time.sleep)
-maxTries = 0
-delayInSeconds = 0.5
+currentIteration = 0
 
 
 def getEnvId():
@@ -57,42 +56,52 @@ def image_comp(mon, imgToCompare):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     res = cv2.matchTemplate(img_gray, imgToCompare, cv2.TM_CCOEFF_NORMED)
     _, max_val, _, _ = cv2.minMaxLoc(res)
+
+    # cv2.imshow("Image", img)
+    # if cv2.waitKey(1) & 0xFF == ord('q'):
+    #     print('Fenster wird geschlossen')
     return max_val
 
 
 def detect_jumpmaster(sc):
-    global maxTries
+    global currentIteration
+    maxIteration = 120
 
     name = './images/jumpIcon.png'
     jumpmasterIcon = cv2.imread(name, 0)
 
     # position of jumpmaster icon for 2560x1440 screens
-    mon = {'left': 1100, 'top': 1076, 'width': 80, 'height': 80}
-    max_val = image_comp(mon, jumpmasterIcon)
-    print(max_val)
-    # cv2.imshow("Image", img)
-    # if cv2.waitKey(1) & 0xFF == ord('q'):
-    #     print('Fenster wird geschlossen')
-    maxTries = maxTries + 1
-    if max_val >= 0.8:
+    iconPosition = {'left': 1100, 'top': 1076, 'width': 80, 'height': 80}
+    max_val = image_comp(iconPosition, jumpmasterIcon)
+    print(f"jumpmaster: {max_val}")
+
+    event = s.enter(1, 1, detect_jumpmaster, (sc,))
+    currentIteration = currentIteration + 1
+    if (max_val >= 0.8):
         sendDiscordDM("DU BIST JUMPASTER DU NOOB")
-        s.enter(20, 1, detect_champion_selection, (sc,))
-    elif maxTries == 120:
-        s.enter(20, 1, detect_champion_selection, (sc,))
-        maxTries = 0
+        s.cancel(event)
+        detect_champion_selection(sc)
+        currentIteration = 0
+    elif(currentIteration == maxIteration):
+        s.cancel(event)
+        detect_champion_selection(sc)
+        currentIteration = 0
 
 
 def detect_champion_selection(sc):
-    name = './images/bangIcon.png'
-    bangaloreIcon = cv2.imread(name, 0)
+    name = './images/bloodIcon.png'
+    bloodIcon = cv2.imread(name, 0)
 
-    # position of bangalore icon for 2560x1440 screens
-    mon = {}
-    max_val = image_comp(mon, bangaloreIcon)
-    print(max_val)
+    # position of bloodhound icon for 2560x1440 screens
+    iconPosition = {'left': 1509, 'top': 435, 'width': 70, 'height': 70}
+    max_val = image_comp(iconPosition, bloodIcon)
+    print(f"character selection: {max_val}")
+
+    event = s.enter(20, 1, detect_champion_selection, (sc,))
     if max_val >= 0.8:
-        s.enter(1, 1, detect_jumpmaster, (sc,))
+        s.cancel(event)
+        detect_jumpmaster(sc)
 
 
-s.enter(delayInSeconds, 1, detect_jumpmaster, (s,))
+s.enter(1, 1, detect_champion_selection, (s,))
 s.run()
