@@ -10,14 +10,25 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+print("Jumpmaster detection started")
+
 # https://stackoverflow.com/a/474543
 s = sched.scheduler(time.time, time.sleep)
 currentIteration = 0
 
 
+# braucht man für die exe: https://stackoverflow.com/a/13790741
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 def getEnvId():
     userId = os.getlogin()
-
     if userId == "juliu":
         return "JULIUS_ID"
     elif userId == "lucas":
@@ -67,13 +78,14 @@ def detect_jumpmaster(sc):
     global currentIteration
     maxIteration = 120
 
-    name = './images/jumpIcon.png'
-    jumpmasterIcon = cv2.imread(name, 0)
+    filePath = resource_path('./images/jumpIcon.png')
+    jumpmasterIcon = cv2.imread(filePath, 0)
 
     # position of jumpmaster icon for 2560x1440 screens
     iconPosition = {'left': 1100, 'top': 1076, 'width': 80, 'height': 80}
     max_val = image_comp(iconPosition, jumpmasterIcon)
-    print(f"jumpmaster: {max_val}")
+    print(
+        f"jumpmaster detected: {'true' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
 
     event = s.enter(1, 1, detect_jumpmaster, (sc,))
     currentIteration = currentIteration + 1
@@ -89,13 +101,14 @@ def detect_jumpmaster(sc):
 
 
 def detect_champion_selection(sc):
-    name = './images/bloodIcon.png'
-    bloodIcon = cv2.imread(name, 0)
+    filePath = resource_path('./images/bloodIcon.png')
+    bloodIcon = cv2.imread(filePath, 0)
 
     # position of bloodhound icon for 2560x1440 screens
     iconPosition = {'left': 1509, 'top': 435, 'width': 70, 'height': 70}
     max_val = image_comp(iconPosition, bloodIcon)
-    print(f"character selection: {max_val}")
+    print(
+        f"character selection detected: {'true' if max_val >= 0.8 else 'false'}")
 
     event = s.enter(20, 1, detect_champion_selection, (sc,))
     if max_val >= 0.8:
