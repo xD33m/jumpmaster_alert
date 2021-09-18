@@ -6,6 +6,8 @@ import mss
 import numpy
 import cv2
 import os
+from playsound import playsound
+from random import randrange
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -33,6 +35,8 @@ def getEnvId():
         return "JULIUS_ID"
     elif userId == "lucas":
         return "LUCAS_ID"
+    else:
+        return "TIM_ID"
 
 
 def sendDiscordDM(message):
@@ -60,10 +64,16 @@ def sendDiscordDM(message):
     requests.post(msgURL, headers=msgHeaders, data=msgJSON)
 
 
-def image_comp(mon, imgToCompare):
+def image_comp(isJumpmaster):
     sct = mss.mss()
 
-    img = numpy.asarray(sct.grab(mon))
+    monitorHeight = sct.monitors[0]['height']
+    is1080p = True if 1070<= monitorHeight<= 1090 else False # bei mir ist's 1081 bei 1080p?
+
+    filePath, iconPosition = getIconAndPosition(isJumpmaster, is1080p)
+    imgToCompare = cv2.imread(filePath, 0)
+
+    img = numpy.asarray(sct.grab(iconPosition))
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     res = cv2.matchTemplate(img_gray, imgToCompare, cv2.TM_CCOEFF_NORMED)
     _, max_val, _, _ = cv2.minMaxLoc(res)
@@ -73,17 +83,37 @@ def image_comp(mon, imgToCompare):
     #     print('Fenster wird geschlossen')
     return max_val
 
+def getIconAndPosition(isJumpmaster, is1080p):
+    jumpmasterFilePath1440 = resource_path('./images/jumpIcon1440.png')
+    jumpmasterFilePath1080 = resource_path('./images/jumpIcon1080.png')
+    jumpmasterIconPosition1440 = {'left': 1100, 'top': 1076, 'width': 80, 'height': 80}
+    jumpmasterIconPosition1080 = {'left': 835, 'top': 817, 'width': 70, 'height': 70}
+
+    charFilePath1440 = resource_path('./images/bloodIcon1440.png')
+    charFilePath1080 = resource_path('./images/bloodIcon1080.png')
+    charIconPosition1440 = {'left': 1509, 'top': 435, 'width': 70, 'height': 70}
+    charIconPosition1080 = {'left': 1123, 'top': 328, 'width': 70, 'height': 70}
+    if isJumpmaster and is1080p:
+        return  jumpmasterFilePath1080, jumpmasterIconPosition1080
+    elif isJumpmaster and not is1080p:
+        return jumpmasterFilePath1440, jumpmasterIconPosition1440
+    elif not isJumpmaster and is1080p:
+        print('here')
+        return charFilePath1080, charIconPosition1080
+    else:
+        return charFilePath1440, charIconPosition1440
+
+def playRandomSound():
+    randomIndex = randrange(8)  # 0-7
+    soundToPlay = resource_path(f'sounds/voice{randomIndex+1}.mp3')
+    playsound(soundToPlay)
 
 def detect_jumpmaster(sc):
     global currentIteration
     maxIteration = 120
+    
+    max_val = image_comp(isJumpmaster=True)
 
-    filePath = resource_path('./images/jumpIcon.png')
-    jumpmasterIcon = cv2.imread(filePath, 0)
-
-    # position of jumpmaster icon for 2560x1440 screens
-    iconPosition = {'left': 1100, 'top': 1076, 'width': 80, 'height': 80}
-    max_val = image_comp(iconPosition, jumpmasterIcon)
     print(
         f"jumpmaster detected: {'true' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
 
@@ -91,6 +121,7 @@ def detect_jumpmaster(sc):
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
         sendDiscordDM("DU BIST JUMPASTER DU NOOB")
+        playRandomSound()
         s.cancel(event)
         detect_champion_selection(sc)
         currentIteration = 0
@@ -101,12 +132,7 @@ def detect_jumpmaster(sc):
 
 
 def detect_champion_selection(sc):
-    filePath = resource_path('./images/bloodIcon.png')
-    bloodIcon = cv2.imread(filePath, 0)
-
-    # position of bloodhound icon for 2560x1440 screens
-    iconPosition = {'left': 1509, 'top': 435, 'width': 70, 'height': 70}
-    max_val = image_comp(iconPosition, bloodIcon)
+    max_val = image_comp(isJumpmaster=False)
     print(
         f"character selection detected: {'true' if max_val >= 0.8 else 'false'}")
 
