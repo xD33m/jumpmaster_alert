@@ -11,10 +11,10 @@ import os
 from playsound import playsound
 from random import randrange
 from dotenv import load_dotenv
-load_dotenv()
 
 
-print("Jumpmaster detection started")
+
+print("Jumpmaster alert started\n\n")
 
 # https://stackoverflow.com/a/474543
 s = sched.scheduler(time.time, time.sleep)
@@ -30,6 +30,8 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+load_dotenv(dotenv_path=resource_path(".env"))
+
 
 def getEnvId():
     userId = os.getlogin()
@@ -37,6 +39,8 @@ def getEnvId():
         return "JULIUS_ID"
     elif userId == "lucas":
         return "LUCAS_ID"
+    elif userId == "felix":
+        return "FELIX_ID"
     else:
         return "TIM_ID"
 
@@ -53,7 +57,6 @@ def sendDiscordDM(message):
     envID = getEnvId()
     recipientID = os.getenv(envID)
     recipientJSON = json.dumps({"recipient_id": recipientID})
-
     response = requests.post(dmEndpoint, headers=dmHeaders, data=recipientJSON)
     response_dict = json.loads(response.text)
     userID = response_dict['id']
@@ -64,7 +67,6 @@ def sendDiscordDM(message):
 
     msgJSON = json.dumps({"content": message})
     requests.post(msgURL, headers=msgHeaders, data=msgJSON)
-
 
 def lookForApex():
     print("Apex not found. Waiting for Apex to start...")
@@ -89,6 +91,9 @@ def takeScreenshot(isJumpmaster):
         hwnd, top, bot = lookForApex()
 
     height = bot - top
+    # height = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
+    # print(f"h: {height}")
+
     is1080p = True if 1070 <= height <= 1090 else False
 
     filePath, imgPosition = getIconAndPosition(isJumpmaster, is1080p)
@@ -174,7 +179,7 @@ def detect_jumpmaster(sc):
     max_val = image_comp(isJumpmaster=True)
 
     print(
-        f"Jumpmaster detected: {'true' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
+        f"Jumpmaster detected: {'true' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
 
     event = s.enter(1, 1, detect_jumpmaster, (sc,))
     currentIteration = currentIteration + 1
@@ -182,22 +187,25 @@ def detect_jumpmaster(sc):
         sendDiscordDM("DU BIST JUMPASTER")
         playRandomSound()
         s.cancel(event)
+        print() # new line
         detect_champion_selection(sc)
         currentIteration = 0
     elif(currentIteration == maxIteration):
         s.cancel(event)
+        print() # new line
         detect_champion_selection(sc)
         currentIteration = 0
 
-
 def detect_champion_selection(sc):
     max_val = image_comp(isJumpmaster=False)
-    print(
-        f"Champion selection detected: {'true' if max_val >= 0.8 else 'false'}")
 
-    event = s.enter(20, 1, detect_champion_selection, (sc,))
+    print(
+        f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}", end='\r')
+
+    event = s.enter(1, 1, detect_champion_selection, (sc,))
     if max_val >= 0.8:
         s.cancel(event)
+        print() # new line
         detect_jumpmaster(sc)
 
 
