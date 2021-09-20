@@ -2,3 +2,4 @@
 __pycache__
 output
 .venv
+py-to-exe-config.json
