@@ -1,6 +1,7 @@
 import win32gui
 import win32ui
 import win32con
+import win32api
 import json
 import requests
 import time
@@ -13,12 +14,11 @@ from random import randrange
 from dotenv import load_dotenv
 
 
-
-print("Jumpmaster alert started\n\n")
+print("Jumpmaster alert started\n")
 
 # https://stackoverflow.com/a/474543
 s = sched.scheduler(time.time, time.sleep)
-currentIteration = 0
+currentIteration = 1
 
 
 # braucht man für die exe: https://stackoverflow.com/a/13790741
@@ -29,6 +29,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
 
 load_dotenv(dotenv_path=resource_path(".env"))
 
@@ -41,8 +42,6 @@ def getEnvId():
         return "LUCAS_ID"
     elif userId == "felix":
         return "FELIX_ID"
-    else:
-        return "TIM_ID"
 
 
 def sendDiscordDM(message):
@@ -68,31 +67,24 @@ def sendDiscordDM(message):
     msgJSON = json.dumps({"content": message})
     requests.post(msgURL, headers=msgHeaders, data=msgJSON)
 
-def lookForApex():
-    print("Apex not found. Waiting for Apex to start...")
-    while 'Apex not found':
-        try:
-            hwnd = win32gui.FindWindow(None, 'Apex Legends')
-            _, top, _, bot = win32gui.GetWindowRect(hwnd)
-            print('Apex detected!')
-            break
-        except:
-            time.sleep(1)
-    return hwnd, top, bot
+
+def lookForApex(hwnd):
+    while hwnd == 0:
+        hwnd = win32gui.FindWindow(None, 'Apex Legends')
+        time.sleep(1)
+    print('Apex detected!')
+    return hwnd
 
 
 def takeScreenshot(isJumpmaster):
     # https://answers.opencv.org/question/229026/help-with-optimization-opencv-python/
 
-    try:
-        hwnd = win32gui.FindWindow(None, 'Apex Legends')
-        _, top, _, bot = win32gui.GetWindowRect(hwnd)
-    except:
-        hwnd, top, bot = lookForApex()
+    hwnd = win32gui.FindWindow(None, 'Apex Legends')
+    if hwnd == 0:
+        print("Apex not found. Waiting for Apex to start...")
+        hwnd = lookForApex(hwnd)
 
-    height = bot - top
-    # height = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
-    # print(f"h: {height}")
+    height = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
 
     is1080p = True if 1070 <= height <= 1090 else False
 
@@ -179,7 +171,7 @@ def detect_jumpmaster(sc):
     max_val = image_comp(isJumpmaster=True)
 
     print(
-        f"Jumpmaster detected: {'true' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
+        f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
 
     event = s.enter(1, 1, detect_jumpmaster, (sc,))
     currentIteration = currentIteration + 1
@@ -187,14 +179,15 @@ def detect_jumpmaster(sc):
         sendDiscordDM("DU BIST JUMPASTER")
         playRandomSound()
         s.cancel(event)
-        print() # new line
+        print()  # new line
         detect_champion_selection(sc)
         currentIteration = 0
     elif(currentIteration == maxIteration):
         s.cancel(event)
-        print() # new line
+        print()  # new line
         detect_champion_selection(sc)
         currentIteration = 0
+
 
 def detect_champion_selection(sc):
     max_val = image_comp(isJumpmaster=False)
@@ -205,7 +198,7 @@ def detect_champion_selection(sc):
     event = s.enter(1, 1, detect_champion_selection, (sc,))
     if max_val >= 0.8:
         s.cancel(event)
-        print() # new line
+        print()  # new line
         detect_jumpmaster(sc)
 
 
