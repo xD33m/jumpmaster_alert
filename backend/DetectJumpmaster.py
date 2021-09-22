@@ -14,10 +14,10 @@ from random import randrange
 from dotenv import load_dotenv
 
 
-print("Jumpmaster alert started\n")
+# print("Jumpmaster alert started\n")
 
 # https://stackoverflow.com/a/474543
-s = sched.scheduler(time.time, time.sleep)
+# s = sched.scheduler(time.time, time.sleep)
 currentIteration = 1
 
 
@@ -25,8 +25,9 @@ currentIteration = 1
 def resource_path(relative_path):
     try:
         base_path = sys._MEIPASS
+        print(base_path)
     except Exception:
-        base_path = os.path.abspath(".")
+        base_path = os.path.abspath("./backend")
 
     return os.path.join(base_path, relative_path)
 
@@ -202,5 +203,5 @@ def detect_champion_selection(sc):
         detect_jumpmaster(sc)
 
 
-s.enter(1, 1, detect_champion_selection, (s,))
-s.run()
+# s.enter(1, 1, detect_champion_selection, (s,))
+# s.run()
