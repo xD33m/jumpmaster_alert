@@ -2,7 +2,8 @@ from logging import debug
 import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from DetectJumpmaster import detect_champion_selection, loadEnv
+from DetectJumpmaster import detect_champion_selection
+from lib import utils
 import sched
 import time
 
@@ -12,7 +13,7 @@ app = Flask(__name__)
 app_config = {"host": "0.0.0.0", "port": sys.argv[1], "debug": True}
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
-loadEnv()
+utils.loadEnv()
 
 """
 ---------------------- DEVELOPER MODE CONFIG -----------------------
