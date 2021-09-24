@@ -69,8 +69,7 @@
     "eject": "react-scripts eject",
     "start": "node ./scripts/dispatch start",
     "start:electron": "electron .",
-    "start:react": "react-scripts start",
-    "test": "react-scripts test"
+    "start:react": "react-scripts start"
   },
   "version": "1.0.0"
 }

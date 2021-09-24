@@ -5,34 +5,26 @@ import win32api
 import json
 import requests
 import time
-import sched
 import numpy
 import cv2
+import sys
 import os
 from playsound import playsound
 from random import randrange
 from dotenv import load_dotenv
 
 
-# print("Jumpmaster alert started\n")
-
-# https://stackoverflow.com/a/474543
-# s = sched.scheduler(time.time, time.sleep)
 currentIteration = 1
 
 
-# braucht man für die exe: https://stackoverflow.com/a/13790741
 def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-        print(base_path)
-    except Exception:
-        base_path = os.path.abspath("./backend")
-
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(
+        os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
 
-load_dotenv(dotenv_path=resource_path(".env"))
+def loadEnv():
+    load_dotenv(dotenv_path=resource_path(".env"))
 
 
 def getEnvId():
@@ -47,6 +39,7 @@ def getEnvId():
 
 def sendDiscordDM(message):
     userAuthToken = os.getenv('DISCORD_BOT_TOKEN')
+    print(userAuthToken)
 
     dmEndpoint = "https://discordapp.com/api/users/@me/channels"
     dmHeaders = {"Authorization": f"Bot {userAuthToken}",
@@ -69,21 +62,24 @@ def sendDiscordDM(message):
     requests.post(msgURL, headers=msgHeaders, data=msgJSON)
 
 
-def lookForApex(hwnd):
-    while hwnd == 0:
-        hwnd = win32gui.FindWindow(None, 'Apex Legends')
-        time.sleep(1)
-    print('Apex detected!')
-    return hwnd
+def lookForApex(sc, hwnd):
+    event = sc.enter(1, 1, lookForApex, (sc, hwnd,))
+    hwnd = win32gui.FindWindow(None, 'Apex Legends')
+    if hwnd != 0:
+        print('Apex detected!')
+        sc.cancel(event)
+        detect_champion_selection(sc)
 
 
-def takeScreenshot(isJumpmaster):
+def takeScreenshot(sc, isJumpmaster, event):
     # https://answers.opencv.org/question/229026/help-with-optimization-opencv-python/
 
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd == 0:
         print("Apex not found. Waiting for Apex to start...")
-        hwnd = lookForApex(hwnd)
+        lookForApex(sc, hwnd)
+        sc.cancel(event)
+        return None, None
 
     height = win32api.GetSystemMetrics(win32con.SM_CYVIRTUALSCREEN)
 
@@ -120,9 +116,10 @@ def takeScreenshot(isJumpmaster):
     return img_gray, filePath
 
 
-def image_comp(isJumpmaster):
-    img_gray, filePath = takeScreenshot(isJumpmaster)
-
+def image_comp(sc, isJumpmaster, event):
+    img_gray, filePath = takeScreenshot(sc, isJumpmaster, event)
+    if img_gray is None or filePath is None:
+        return None
     imgToCompare = cv2.imread(filePath, 0)
 
     res = cv2.matchTemplate(img_gray, imgToCompare, cv2.TM_CCOEFF_NORMED)
@@ -165,43 +162,42 @@ def playRandomSound():
     playsound(soundToPlay)
 
 
-def detect_jumpmaster(sc):
+def detect_jumpmaster(sc,):
     global currentIteration
     maxIteration = 120
 
-    max_val = image_comp(isJumpmaster=True)
+    event = sc.enter(1, 1, detect_jumpmaster, (sc,))
+
+    max_val = image_comp(sc, True, event)
 
     print(
         f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
 
-    event = s.enter(1, 1, detect_jumpmaster, (sc,))
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
-        sendDiscordDM("DU BIST JUMPASTER")
         playRandomSound()
-        s.cancel(event)
+        sendDiscordDM("DU BIST JUMPASTER")
+        sc.cancel(event)
         print()  # new line
         detect_champion_selection(sc)
         currentIteration = 0
     elif(currentIteration == maxIteration):
-        s.cancel(event)
+        sc.cancel(event)
         print()  # new line
         detect_champion_selection(sc)
         currentIteration = 0
 
 
 def detect_champion_selection(sc):
-    max_val = image_comp(isJumpmaster=False)
+    event = sc.enter(20, 1, detect_champion_selection, (sc,))
+    max_val = image_comp(sc, False, event)
+    if max_val is None:
+        return
 
     print(
-        f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}", end='\r')
+        f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}")
 
-    event = s.enter(1, 1, detect_champion_selection, (sc,))
     if max_val >= 0.8:
-        s.cancel(event)
+        sc.cancel(event)
         print()  # new line
         detect_jumpmaster(sc)
-
-
-# s.enter(1, 1, detect_champion_selection, (s,))
-# s.run()
