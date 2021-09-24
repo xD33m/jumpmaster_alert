@@ -5,6 +5,7 @@ import numpy
 import cv2
 from lib import utils
 from lib import alerts
+from threading import Thread
 
 currentIteration = 1
 
@@ -89,8 +90,11 @@ def detect_jumpmaster(scheduler):
 
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
-        alerts.playRandomSound()
-        alerts.sendDiscordDM("DU BIST JUMPASTER")
+        soundThread = Thread(target=alerts.playRandomSound)
+        discordThread = Thread(target=alerts.sendDiscordDM,
+                               args=("DU BIST JUMPMASTER",))
+        soundThread.start()
+        discordThread.start()
         scheduler.cancel(event)
         print()  # new line
         detect_champion_selection(scheduler)

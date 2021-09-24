@@ -34,11 +34,11 @@ def is1080pMonitor():
 def getNeedleImgPath(isJumpmaster):
     is1080p = is1080pMonitor()
 
-    jumpmasterImgPath1440 = resource_path('./images/jumpIcon1440.png')
-    jumpmasterImgPath1080 = resource_path('./images/jumpIcon1080.png')
+    jumpmasterImgPath1440 = resource_path('../images/jumpIcon1440.png')
+    jumpmasterImgPath1080 = resource_path('../images/jumpIcon1080.png')
 
-    charImgPath1440 = resource_path('./images/bloodIcon1440.png')
-    charImgPath1080 = resource_path('./images/bloodIcon1080.png')
+    charImgPath1440 = resource_path('../images/bloodIcon1440.png')
+    charImgPath1080 = resource_path('../images/bloodIcon1080.png')
 
     if isJumpmaster and is1080p:
         return jumpmasterImgPath1080
