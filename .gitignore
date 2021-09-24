@@ -2,6 +2,7 @@
 
 # env
 **/.env
+.venv
 .env
 /backend/.env
 backend/.env
@@ -36,3 +37,4 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+**/py-to-exe-config.json
