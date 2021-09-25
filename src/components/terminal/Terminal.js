@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import styles from "../App.module.scss";
+import styles from "components/terminal/Terminal.module.scss";
 import TerminalMessage from "./TerminalMessage";
 
 const Terminal = ({ logs }) => {

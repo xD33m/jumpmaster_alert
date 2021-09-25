@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../App.module.scss";
+import Toggle from "../toggle/Toggle";
 
 export default function ThemeMode({ setTheme }) {
   const [themeState, setThemeState] = useState(false);
@@ -9,15 +9,5 @@ export default function ThemeMode({ setTheme }) {
     setTheme(!themeState);
   };
 
-  return <Toggle label="Toggle" id="4" onClick={() => updateTheme()} />;
+  return <Toggle label="Toggle" id="4" onClick={updateTheme} />;
 }
-
-const Toggle = ({ label, id, onClick }) => {
-  return (
-    <div className={styles.toggleButton}>
-      <input className={styles.hide} id={id} type="checkbox" onClick={onClick} />
-      <label htmlFor={id} className={styles.toggle} />
-      <span className={styles.label}>{label}</span>
-    </div>
-  );
-};

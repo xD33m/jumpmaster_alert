@@ -1,0 +1,54 @@
+.app-logo {
+  height: 15vmin;
+  display: block;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .app-logo-animation {
+    animation: app-logo-float infinite 3s ease-in-out;
+  }
+}
+
+@keyframes app-logo-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.red {
+  filter: invert(33%) sepia(83%) saturate(6358%) hue-rotate(347deg) brightness(90%) contrast(91%);
+}
+
+.white {
+  filter: invert(100%);
+}
+
+
+
+.headingSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.toggleSection {
+  padding-right: 12px;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  color: darken(white, 50%);
+  margin: 1rem 0;
+}
+
+hr {
+  border-top: 1px solid rgba(128, 128, 128, 0.555);
+  margin: 1.5rem auto 0.2rem auto;
+}

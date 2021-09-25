@@ -1,0 +1,110 @@
+// Variables
+$window-close: #f77669;
+$window-minify: #ffcb6b;
+$window-expand: #c3e88d;
+
+.cv-code {
+  font-size: 18px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.16);
+  content-visibility: auto;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--terminal-background-code);
+  width: calc(100%);
+  height: calc(100%);
+  margin: 0 auto;
+  &-header {
+    display: flex;
+    align-items: center;
+    background: var(--terminal-background-header);
+    color: var(--terminal-text-header);
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 0.5rem 0.5rem 0 0;
+    position: relative;
+    font-family: "JetBrains Mono", monospace;
+  }
+  &-buttons {
+    margin-right: 1rem;
+    display: flex;
+    gap: 6px;
+    .fake-button[data-close] {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      background: $window-close;
+    }
+    .fake-button[data-minify] {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      background: $window-minify;
+    }
+    .fake-button[data-expand] {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      background: $window-expand;
+    }
+  }
+  &-title {
+    margin: 0 auto;
+    display: block;
+  }
+  .content {
+    position: relative;
+    color: white;
+    padding: 1rem;
+
+    overflow-y: scroll;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y proximity;
+
+    height: calc(100% - 38px);
+    font-family: "Encode Sans Expanded", sans-serif;
+    font-size: 0.8rem;
+    .instruction {
+      display: block;
+      padding: 0 0 7px 0;
+    }
+    .user {
+      color: var(--terminal-user-text);
+    }
+    .path,
+    .command {
+      color: var(--terminal-msg-text);
+    }
+  }
+  .content > div:last-child {
+    scroll-snap-align: end;
+  }
+
+  .scrollbar::-webkit-scrollbar {
+    background-color: var(--terminal-background-code);
+    width: 16px;
+  }
+
+  /* background of the scrollbar except button or resizer */
+  .scrollbar::-webkit-scrollbar-track {
+    background-color: var(--terminal-background-code);
+  }
+  .scrollbar::-webkit-scrollbar-track:hover {
+    background-color: #f4f4f4;
+  }
+
+  /* scrollbar itself */
+  .scrollbar::-webkit-scrollbar-thumb {
+    background-color: #babac0;
+    border-radius: 16px;
+    border: 5px solid var(--terminal-background-code);
+  }
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #a0a0a5;
+    border: 4px solid #f4f4f4;
+  }
+
+  /* set button(top and bottom of the scrollbar) */
+  .scrollbar::-webkit-scrollbar-button {
+    display: none;
+  }
+}
