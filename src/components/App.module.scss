@@ -1,5 +1,32 @@
 $red: #dc262d;
 
+.light {
+  --text: black;
+  --background: white;
+
+  --terminal-text-header: black;
+  --terminal-background-header: #e3e3e3;
+  --terminal-background-code: white;
+  --terminal-user-text: #408501;
+  --terminal-msg-text: #0872c4;
+}
+
+.dark {
+  --text: white;
+  --background: #1f1e1e;
+
+  --terminal-text-header: #eee;
+  --terminal-background-header: #393d3e;
+  --terminal-background-code: #1f1e1e;
+  --terminal-user-text: #6db928;
+  --terminal-msg-text: #6fa5cd;
+}
+
+.main {
+  background-color: var(--background);
+  color: var(--text);
+}
+
 .app-logo {
   height: 15vmin;
   display: block;
@@ -14,6 +41,10 @@ $red: #dc262d;
 
 .red {
   filter: invert(33%) sepia(83%) saturate(6358%) hue-rotate(347deg) brightness(90%) contrast(91%);
+}
+
+.white {
+  filter: invert(100%);
 }
 
 .app-header {
@@ -49,28 +80,21 @@ $window-close: #f77669;
 $window-minify: #ffcb6b;
 $window-expand: #c3e88d;
 
-$text-header: black;
-$background-header: #e3e3e3;
-$background-code: white;
-// $text-header: #eee;
-// $background-header: #393d3e;
-// $background-code: #1f1e1e;
-
 .cv-code {
   font-size: 18px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.16);
   content-visibility: auto;
   border-radius: 0.5rem;
   overflow: hidden;
-  background: $background-code;
+  background: var(--terminal-background-code);
   width: calc(100%);
   height: calc(100%);
   margin: 0 auto;
   &-header {
     display: flex;
     align-items: center;
-    background: $background-header;
-    color: $text-header;
+    background: var(--terminal-background-header);
+    color: var(--terminal-text-header);
     text-align: center;
     padding: 5px 10px;
     border-radius: 0.5rem 0.5rem 0 0;
@@ -121,11 +145,11 @@ $background-code: white;
       padding: 0 0 7px 0;
     }
     .user {
-      color: #6db928;
+      color: var(--terminal-user-text);
     }
     .path,
     .command {
-      color: #6fa5cd;
+      color: var(--terminal-msg-text);
     }
   }
   .content > div:last-child {
@@ -133,13 +157,13 @@ $background-code: white;
   }
 
   .scrollbar::-webkit-scrollbar {
-    background-color: #fff;
+    background-color: var(--terminal-background-code);
     width: 16px;
   }
 
   /* background of the scrollbar except button or resizer */
   .scrollbar::-webkit-scrollbar-track {
-    background-color: #fff;
+    background-color: var(--terminal-background-code);
   }
   .scrollbar::-webkit-scrollbar-track:hover {
     background-color: #f4f4f4;
@@ -149,7 +173,7 @@ $background-code: white;
   .scrollbar::-webkit-scrollbar-thumb {
     background-color: #babac0;
     border-radius: 16px;
-    border: 5px solid #fff;
+    border: 5px solid var(--terminal-background-code);
   }
   .scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: #a0a0a5;

@@ -18,7 +18,7 @@ import styles from "components/titlebar/scss/Titlebar.module.scss";
  * electron-window-title-buttons used in main.js to set opacity on/off focus.
  */
 
-const Titlebar = () => {
+const Titlebar = ({ darkTheme }) => {
   const [maximized, setMaximized] = useState(false);
 
   const handleMaximizeToggle = () => {
@@ -27,7 +27,7 @@ const Titlebar = () => {
   };
 
   return (
-    <section className={styles.titlebar}>
+    <section className={`${styles.titlebar} ${darkTheme ? styles.dark : styles.light}`}>
       <div>
         <img src={favicon} alt="favicon" />
         <span id="electron-window-title-text">{document.title}</span>

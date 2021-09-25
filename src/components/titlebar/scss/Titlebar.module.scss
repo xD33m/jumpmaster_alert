@@ -1,3 +1,19 @@
+.light {
+  --text: #252525;
+  --background: white;
+
+  --background-header: #eee;
+  --image-color: invert(0%);
+}
+
+.dark {
+  --text: white;
+  --background: #202124;
+
+  --background-header: #393d3e;
+  --image-color: invert(100%);
+}
+
 body section.titlebar {
   display: flex;
   justify-content: space-between;
@@ -11,7 +27,7 @@ body section.titlebar {
   max-width: 100vw;
   -webkit-user-select: none;
   -webkit-app-region: drag;
-  background-color: #eaeaea;
+  background-color: var(--background-header);
 
   div {
     display: flex;
@@ -20,12 +36,13 @@ body section.titlebar {
     span {
       font-size: 14px;
       font-family: "Roboto", sans-serif;
-      color: #252525;
+      color: var(--text);
     }
 
     img {
       width: 20px;
       padding: 5px;
+      filter: var(--image-color);
     }
   }
 }

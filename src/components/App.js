@@ -6,6 +6,7 @@ import Titlebar from "components/titlebar/Titlebar";
 import logo from "logo.svg";
 import styles from "components/App.module.scss";
 import Terminal from "./terminal/Terminal";
+import ThemeToggle from "./theme/ThemeToggle";
 
 const { ipcRenderer } = window.require("electron");
 const port = ipcRenderer.sendSync("get-port-number");
@@ -15,6 +16,7 @@ function App() {
   const [socketStatus, setSocketStatus] = useState(false);
   const [logs, setLogs] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [darkTheme, setTheme] = useState(false);
 
   useEffect(() => {
     const s = io(`http://localhost:${port}`);
@@ -56,8 +58,8 @@ function App() {
     }
   };
   return (
-    <>
-      <Titlebar />
+    <div className={`${styles.main} ${darkTheme ? styles.dark : styles.light}`}>
+      <Titlebar darkTheme={darkTheme} />
 
       <div className={styles["app-header"]}>
         <div className={`${styles.col} ${styles.leftSide}`}>
@@ -66,7 +68,7 @@ function App() {
               src={logo}
               className={`${styles["app-logo"]} ${socketStatus && styles["app-logo-animation"]} ${
                 status === "On" && styles.red
-              }`}
+              } ${darkTheme && status === "Off" && styles.white}`}
               alt="logo"
             />
             <p>Apex Jumpmaster Alert</p>
@@ -86,14 +88,14 @@ function App() {
             />
             <Toggle label="Toggle" id="2" onClick={() => {}} />
             <Toggle label="Toggle" id="3" onClick={() => {}} />
-            <Toggle label="Toggle" id="4" onClick={() => {}} />
+            <ThemeToggle setTheme={setTheme} />
           </div>
         </div>
         <div className={styles.col}>
           <Terminal logs={logs} />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
