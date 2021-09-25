@@ -3,8 +3,10 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from DetectJumpmaster import detect_champion_selection, cancelAllTimers
 from lib import utils
+from lib import alerts
 from lib import sockets
 from threading import Thread, Event
+
 
 app = Flask(__name__)
 app_config = {"host": "0.0.0.0", "port": sys.argv[1]}
@@ -85,20 +87,39 @@ def connect():
 # Handle the webapp sending a message to the websocket
 
 
-@socketio.on('message')
+@socketio.on('toggle')
 def handle_message(message):
     print('received message: ', message["status"])
+    print('received message: ', message["type"])
 
-    if (message["status"] == "Off"):
-        cancelAllTimers()
-        socketio.emit('status', {
-            'data': 'Stopping Jumpmaster alert', 'status': 'Off'})
-        socketio.emit('logs', "Jumpmaster alert stopped")
+    if (message["status"] == False):
+        if(message["type"] == "startAndStop"):
+            cancelAllTimers()
+            socketio.emit('status', {
+                'data': 'Stopping Jumpmaster alert', 'status': False})
+            socketio.emit('logs', "Jumpmaster alert stopped")
+        if(message["type"] == "sound"):
+            alerts.updateNotificationSettings(
+                message["type"], message["status"])
+            socketio.emit('logs', "Sound alert deactivated")
+        if(message["type"] == "discordDM"):
+            alerts.updateNotificationSettings(
+                message["type"], message["status"])
+            socketio.emit('logs', "Discord DM deactivated")
 
-    elif (message["status"] == "On"):
-        detect_champion_selection()
-        socketio.emit('status', {
-            'data': 'Starting Jumpmaster alert', 'status': 'On'})
+    elif (message["status"] == True):
+        if(message["type"] == "startAndStop"):
+            detect_champion_selection()
+            socketio.emit('status', {
+                'data': 'Starting Jumpmaster alert', 'status': True})
+        if(message["type"] == "sound"):
+            alerts.updateNotificationSettings(
+                message["type"], message["status"])
+            socketio.emit('logs', "Sound alert activated")
+        if(message["type"] == "discordDM"):
+            alerts.updateNotificationSettings(
+                message["type"], message["status"])
+            socketio.emit('logs', "Discord DM activated")
 
     else:
         print("Unknown command")

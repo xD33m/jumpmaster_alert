@@ -13,7 +13,9 @@ function App() {
   const [darkTheme, setTheme] = useState(false);
   const [logs, setLogs] = useState([]);
   const [socketStatus, setSocketStatus] = useState(false);
-  const [status, setStatus] = useState("Off");
+  const [status, setStatus] = useState(false);
+  const [soundActivated, setSoundActivated] = useState(false);
+  const [dicordDM, setDiscordDM] = useState(false);
   const [socket, setSocket] = useState();
 
   useEffect(() => {
@@ -30,11 +32,6 @@ function App() {
       console.log("Disconnected to socket");
     });
 
-    s.on("status", (message) => {
-      setStatus(message.status);
-      console.log("status", message.status);
-    });
-
     s.on("logs", (log) => {
       const [time] = new Date().toTimeString().split(" ");
       const fullLog = { time, log };
@@ -47,12 +44,32 @@ function App() {
   }, []);
 
   const startAndStop = () => {
-    if (status === "On") {
-      socket.emit("message", { data: "Stop Jumpmaster Alert", status: "Off" });
-      setStatus("Off");
+    if (status === true) {
+      socket.emit("toggle", { type: "startAndStop", status: false });
+      setStatus(false);
     } else {
-      socket.emit("message", { data: "Start Jumpmaster Alert", status: "On" });
-      setStatus("On");
+      socket.emit("toggle", { type: "startAndStop", status: true });
+      setStatus(true);
+    }
+  };
+
+  const soundToggle = () => {
+    if (soundActivated === true) {
+      socket.emit("toggle", { type: "sound", status: false });
+      setSoundActivated(false);
+    } else {
+      socket.emit("toggle", { type: "sound", status: true });
+      setSoundActivated(true);
+    }
+  };
+
+  const discordDMToggle = () => {
+    if (dicordDM === true) {
+      socket.emit("toggle", { type: "discordDM", status: false });
+      setDiscordDM(false);
+    } else {
+      socket.emit("toggle", { type: "discordDM", status: true });
+      setDiscordDM(true);
     }
   };
 
@@ -68,6 +85,8 @@ function App() {
             socketStatus={socketStatus}
             status={status}
             startAndStop={startAndStop}
+            soundToggle={soundToggle}
+            discordDMToggle={discordDMToggle}
           />
         </div>
         <div className={styles.col}>

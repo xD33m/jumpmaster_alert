@@ -5,6 +5,9 @@ from playsound import playsound
 from random import randrange
 from lib.utils import getEnvId, resource_path
 
+soundActivated = False
+discordDMActivated = False
+
 
 def sendDiscordDM(message):
     userAuthToken = os.getenv('DISCORD_BOT_TOKEN')
@@ -34,3 +37,21 @@ def playRandomSound():
     randomIndex = randrange(8)  # 0-7
     soundToPlay = resource_path(f'..\\sounds\\voice{randomIndex+1}.wav')
     playsound(soundToPlay)
+
+
+def updateNotificationSettings(variable, value):
+    if variable == 'sound':
+        global soundActivated
+        soundActivated = value
+    elif variable == 'discordDM':
+        global discordDMActivated
+        discordDMActivated = value
+    else:
+        print('Variable not found')
+
+
+def sendNotification(message):
+    if soundActivated:
+        playRandomSound()
+    if discordDMActivated:
+        sendDiscordDM(message)

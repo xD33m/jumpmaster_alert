@@ -103,11 +103,9 @@ def detect_jumpmaster():
 
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
-        soundThread = Thread(target=alerts.playRandomSound)
-        discordThread = Thread(target=alerts.sendDiscordDM,
-                               args=("DU BIST JUMPMASTER",))
-        soundThread.start()
-        discordThread.start()
+        notifcationThread = Thread(target=alerts.sendNotification,
+                                   args=("DU BIST JUMPMASTER",))
+        notifcationThread.start()
         jumpmasterTimer.cancel()
         detect_champion_selection()
         currentIteration = 0

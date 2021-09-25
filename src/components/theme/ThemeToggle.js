@@ -9,5 +9,5 @@ export default function ThemeMode({ setTheme }) {
     setTheme(!themeState);
   };
 
-  return <Toggle label="Toggle" id="4" onClick={updateTheme} />;
+  return <Toggle label="Dark Mode" id="4" onClick={updateTheme} />;
 }
