@@ -37,12 +37,12 @@ class Packager {
 
       package: [
         `--src ${path("../dist/linux/app-linux-x64/")}`,
-        "Apex Jumpmaster Detection",
+        "Apex Jumpmaster Alert",
         `--dest ${path("../dist/linux/setup")}`,
         "--arch amd64",
         `--icon ${path("../utilities/deb/images/icon.ico")}`,
         `--background ${path("../utilities/deb/images/background.png")}`,
-        '--title "Apex Jumpmaster Detection"',
+        '--title "Apex Jumpmaster Alert"',
         "--overwrite",
       ].join(" "),
 
@@ -76,11 +76,11 @@ class Packager {
 
       package: [
         path("../dist/mac/app-darwin-x64/app.app"),
-        "Apex Jumpmaster Detection",
+        "Apex Jumpmaster Alert",
         `--out=${path("../dist/mac/setup")}`,
         `--icon=${path("../utilities/dmg/images/icon.icns")}`,
         `--background=${path("../utilities/dmg/images/background.png")}`,
-        '--title="Apex Jumpmaster Detection"',
+        '--title="Apex Jumpmaster Alert"',
         "--overwrite",
       ].join(" "),
 
@@ -125,10 +125,10 @@ class Packager {
       appDirectory: path("../dist/windows/app-win32-x64"),
       appIconPath: path("../utilities/msi/images/icon.ico"),
       outputDirectory: path("../dist/windows/setup"),
-      description: "Apex Jumpmaster Detection",
+      description: "Apex Jumpmaster Alert",
       exe: "app",
       manufacturer: "Julius Lucas Felix",
-      name: "Apex Jumpmaster Detection",
+      name: "Apex Jumpmaster Alert",
       ui: {
         chooseDirectory: true,
         images: {

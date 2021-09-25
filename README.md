@@ -1,4 +1,4 @@
-# Apex Jumpmaster Detection
+# Apex Jumpmaster Alert
 
 ## 🛠️ Setup
 
