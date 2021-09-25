@@ -57,7 +57,7 @@ module.exports = {
     "no-console": [
       "warn",
       {
-        allow: ["warn", "error"],
+        allow: ["log", "warn", "error"],
       },
     ],
     "no-nested-ternary": [0],
@@ -125,9 +125,8 @@ module.exports = {
     "react/no-access-state-in-setstate": [0],
     "react/no-array-index-key": [0],
     "react/no-unused-state": ["warn"],
-    "react/prop-types": ["warn"],
+    "react/prop-types": "off",
     "react/prefer-stateless-function": ["warn"],
-    "react/require-default-props": ["warn"],
     "react/sort-comp": [0],
     "react/state-in-constructor": ["warn", "never"],
   },
