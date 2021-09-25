@@ -2,12 +2,8 @@ from logging import debug
 import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from DetectJumpmaster import detect_champion_selection
+from DetectJumpmaster import detect_champion_selection, cancelAllTimers
 from lib import utils
-import sched
-import time
-
-# braucht man für die exe: https://stackoverflow.com/a/13790741
 
 app = Flask(__name__)
 app_config = {"host": "0.0.0.0", "port": sys.argv[1], "debug": True}
@@ -48,15 +44,12 @@ def example():
 """
 # Quits Flask on Electron exit
 
-s = sched.scheduler(time.time, time.sleep)
-
 
 @app.route("/start")
 def start():
     print("Jumpmaster alert started\n")
     # https://stackoverflow.com/a/474543
-    s.enter(1, 1, detect_champion_selection, (s,))
-    s.run()
+    detect_champion_selection()
 
     return jsonify("App has startet")
 
@@ -64,14 +57,14 @@ def start():
 @app.route("/stop")
 def stop():
     print("Jumpmaster alert stopped\n")
-    list(map(s.cancel, s.queue))
+    cancelAllTimers()
 
     return jsonify("App has stopped")
 
 
 @app.route("/quit")
 def quit():
-    list(map(s.cancel, s.queue))
+    cancelAllTimers()
     shutdown = request.environ.get("werkzeug.server.shutdown")
     shutdown()
 

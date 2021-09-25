@@ -9,24 +9,33 @@ from threading import Thread, Timer
 
 currentIteration = 1
 
+jumpmasterTimer = ''
+champSelectTimer = ''
+lookForApexTimer = ''
+
 
 def lookForApex(hwnd):
-    timer = Timer(1, lookForApex, (hwnd,))
-    timer.start()
+    global lookForApexTimer
+    lookForApexTimer = Timer(1, lookForApex, (hwnd,))
+    lookForApexTimer.start()
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd != 0:
         print('Apex detected!')
-        timer.cancel()
+        lookForApexTimer.cancel()
         detect_champion_selection()
 
 
-def takeScreenshot(isJumpmaster, timer):
+def takeScreenshot(isJumpmaster):
     # https://answers.opencv.org/question/229026/help-with-optimization-opencv-python/
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd == 0:
         print("Apex not found. Waiting for Apex to start...")
         lookForApex(hwnd)
-        timer.cancel()
+        if champSelectTimer != '' and champSelectTimer.is_alive():
+            champSelectTimer.cancel()
+        if jumpmasterTimer != '' and jumpmasterTimer.is_alive():
+            jumpmasterTimer.cancel()
+
         return None
 
     imgPosition = utils.getNeedlePostion(isJumpmaster)
@@ -60,8 +69,8 @@ def takeScreenshot(isJumpmaster, timer):
     return screenshot_gray
 
 
-def getImgSimilarity(isJumpmaster, t):
-    screenshot_gray = takeScreenshot(isJumpmaster, t)
+def getImgSimilarity(isJumpmaster):
+    screenshot_gray = takeScreenshot(isJumpmaster)
     if screenshot_gray is None:
         return None
 
@@ -80,11 +89,12 @@ def getImgSimilarity(isJumpmaster, t):
 
 def detect_jumpmaster():
     global currentIteration
-    timer = Timer(1, detect_jumpmaster)
-    timer.start()
+    global jumpmasterTimer
+    jumpmasterTimer = Timer(1, detect_jumpmaster)
+    jumpmasterTimer.start()
     maxIteration = 120
 
-    max_val = getImgSimilarity(True, timer)
+    max_val = getImgSimilarity(True)
 
     print(
         f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
@@ -96,21 +106,22 @@ def detect_jumpmaster():
                                args=("DU BIST JUMPMASTER",))
         soundThread.start()
         discordThread.start()
-        timer.cancel()
+        jumpmasterTimer.cancel()
         print()  # new line
         detect_champion_selection()
         currentIteration = 0
     elif(currentIteration == maxIteration):
-        timer.cancel()
+        jumpmasterTimer.cancel()
         print()  # new line
         detect_champion_selection()
         currentIteration = 0
 
 
 def detect_champion_selection():
-    timer = Timer(20, detect_champion_selection)
-    timer.start()
-    max_val = getImgSimilarity(False, timer)
+    global champSelectTimer
+    champSelectTimer = Timer(20, detect_champion_selection)
+    champSelectTimer.start()
+    max_val = getImgSimilarity(False)
     if max_val is None:
         return
 
@@ -118,6 +129,15 @@ def detect_champion_selection():
         f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}")
 
     if max_val >= 0.8:
-        timer.cancel()
+        champSelectTimer.cancel()
         print()  # new line
         detect_jumpmaster()
+
+
+def cancelAllTimers():
+    if champSelectTimer != '' and champSelectTimer.is_alive():
+        champSelectTimer.cancel()
+    if jumpmasterTimer != '' and jumpmasterTimer.is_alive():
+        jumpmasterTimer.cancel()
+    if lookForApexTimer != '' and lookForApexTimer.is_alive():
+        lookForApexTimer.cancel()
