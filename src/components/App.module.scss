@@ -1,3 +1,4 @@
+@use 'sass:math';
 $red: #dc262d;
 
 .app-logo {
@@ -190,8 +191,8 @@ hr {
 /*
 ----------------------- Toggle ------------------------
 */
-$circ: 1.5rem;
-$switch-height: 1.3rem;
+$circ: 1.0rem;
+$switch-height: 0.9rem;
 
 .hide {
   display: none;
@@ -212,7 +213,7 @@ $switch-height: 1.3rem;
   padding: 2px;
   width: $switch-height * 2.3;
   height: $switch-height;
-  border-radius: $switch-height/2;
+  border-radius: math.div($switch-height, 2);
   background: #d6d6d6;
   transition: box-shadow 0.4s;
   margin-right: 0.5rem;
@@ -241,7 +242,7 @@ input:checked + label {
 
 label:active:after,
 input:checked + label:active:after {
-  height: $switch-height/1.1;
+  height: math.div($switch-height,1.1);
   width: $switch-height * 1.2;
 }
 
