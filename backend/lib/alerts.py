@@ -33,5 +33,5 @@ def sendDiscordDM(message):
 
 def playRandomSound():
     randomIndex = randrange(8)  # 0-7
-    soundToPlay = resource_path(f'sounds\\voice{randomIndex+1}.wav')
+    soundToPlay = resource_path(f'..\\sounds\\voice{randomIndex+1}.wav')
     playsound(soundToPlay)
