@@ -1,25 +1,31 @@
-.app {
-  text-align: center;
-}
-
 .app-logo {
-  height: 40vmin;
+  height: 15vmin;
+  position: absolute;
+  top: 5%;
+  left: 0;
+
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .app-logo {
+  .app-logo-animation {
     animation: app-logo-float infinite 3s ease-in-out;
   }
 }
 
+.red {
+  filter: invert(33%) sepia(83%) saturate(6358%) hue-rotate(347deg) brightness(90%) contrast(91%);
+}
+
 .app-header {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
+}
+
+.col {
+  width: 50%;
+  height: 50%;
 }
 
 .app-link {

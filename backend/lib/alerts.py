@@ -8,7 +8,6 @@ from lib.utils import getEnvId, resource_path
 
 def sendDiscordDM(message):
     userAuthToken = os.getenv('DISCORD_BOT_TOKEN')
-    print(userAuthToken)
 
     dmEndpoint = "https://discordapp.com/api/users/@me/channels"
     dmHeaders = {"Authorization": f"Bot {userAuthToken}",

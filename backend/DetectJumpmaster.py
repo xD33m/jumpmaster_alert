@@ -6,6 +6,7 @@ import cv2
 from lib import utils
 from lib import alerts
 from threading import Thread, Timer
+from lib import sockets
 
 currentIteration = 1
 
@@ -20,7 +21,7 @@ def lookForApex(hwnd):
     lookForApexTimer.start()
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd != 0:
-        print('Apex detected!')
+        sockets.emitEvent("logs", 'Apex detected!')
         lookForApexTimer.cancel()
         detect_champion_selection()
 
@@ -29,7 +30,8 @@ def takeScreenshot(isJumpmaster):
     # https://answers.opencv.org/question/229026/help-with-optimization-opencv-python/
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd == 0:
-        print("Apex not found. Waiting for Apex to start...")
+        sockets.emitEvent("logs",
+                          "Apex not found. Waiting for Apex to start...")
         lookForApex(hwnd)
         if champSelectTimer != '' and champSelectTimer.is_alive():
             champSelectTimer.cancel()
@@ -96,8 +98,8 @@ def detect_jumpmaster():
 
     max_val = getImgSimilarity(True)
 
-    print(
-        f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
+    sockets.emitEvent("logs",
+                      f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
 
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
@@ -107,12 +109,10 @@ def detect_jumpmaster():
         soundThread.start()
         discordThread.start()
         jumpmasterTimer.cancel()
-        print()  # new line
         detect_champion_selection()
         currentIteration = 0
     elif(currentIteration == maxIteration):
         jumpmasterTimer.cancel()
-        print()  # new line
         detect_champion_selection()
         currentIteration = 0
 
@@ -125,12 +125,11 @@ def detect_champion_selection():
     if max_val is None:
         return
 
-    print(
-        f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}")
+    sockets.emitEvent(
+        "logs", f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}")
 
     if max_val >= 0.8:
         champSelectTimer.cancel()
-        print()  # new line
         detect_jumpmaster()
 
 

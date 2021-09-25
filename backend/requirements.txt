@@ -29,3 +29,5 @@ zope.interface==5.4.0
 Flask
 flask-cors
 pyinstaller
+Flask-SocketIO
+gevent-websocket

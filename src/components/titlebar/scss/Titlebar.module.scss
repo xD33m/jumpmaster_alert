@@ -4,7 +4,7 @@ body section.titlebar {
   align-items: center;
   height: 32px;
   padding: 0;
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100vw;
@@ -12,6 +12,7 @@ body section.titlebar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
   background-color: #eaeaea;
+  margin-bottom: 20px;
 
   div {
     display: flex;

@@ -12,7 +12,7 @@ def resource_path(relative_path):
 
 
 def loadEnv():
-    load_dotenv(dotenv_path=resource_path(".env"))
+    load_dotenv(dotenv_path=resource_path("../.env"))
 
 
 def getEnvId():
