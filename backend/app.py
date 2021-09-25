@@ -1,4 +1,3 @@
-from logging import debug
 import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
@@ -7,14 +6,9 @@ from lib import utils
 from lib import sockets
 from threading import Thread, Event
 
-from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandler
-
-# braucht man für die exe: https://stackoverflow.com/a/13790741
-
 app = Flask(__name__)
 app_config = {"host": "0.0.0.0", "port": sys.argv[1]}
-app.config['PROPAGATE_EXCEPTIONS'] = True
+
 socketio = sockets.initSocketIO(app)
 utils.loadEnv()
 
@@ -26,10 +20,8 @@ thread_stop_event = Event()
 """
 # Developer mode uses app.py
 if "app.py" in sys.argv[0]:
-    # Update app config
     app_config["debug"] = True
 
-    # CORS settings
     cors = CORS(
         app,
         resources={r"/*": {"origins": "http://localhost*"}},
@@ -52,7 +44,6 @@ def example():
 """
 -------------------------- APP SERVICES ----------------------------
 """
-# Quits Flask on Electron exit
 
 
 @app.route("/start")
@@ -123,6 +114,3 @@ if __name__ == "__main__":
     # app.run(**app_config)
     socketio.run(app, debug=True,
                  host=app_config["host"], port=int(app_config["port"]))
-    # http_server = WSGIServer(
-    #     ('', int(sys.argv[1])), app, handler_class=WebSocketHandler)
-    # http_server.serve_forever()
