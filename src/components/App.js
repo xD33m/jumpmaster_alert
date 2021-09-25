@@ -5,6 +5,7 @@ import Titlebar from "components/titlebar/Titlebar";
 
 import logo from "logo.svg";
 import styles from "components/App.module.scss";
+import Terminal from "./terminal/Terminal";
 
 const { ipcRenderer } = window.require("electron");
 const port = ipcRenderer.sendSync("get-port-number");
@@ -35,7 +36,9 @@ function App() {
     });
 
     s.on("logs", (log) => {
-      setLogs((prevLogs) => [...prevLogs, log]);
+      const time = new Date().toTimeString().split(" ")[0];
+      const fullLog = { time, log };
+      setLogs((prevLogs) => [...prevLogs, fullLog]);
     });
 
     return () => {
@@ -95,46 +98,6 @@ function App() {
 }
 
 export default App;
-
-const TerminalMessage = ({ message }) => {
-  return (
-    <div className={`${styles.instruction}`}>
-      <span className={`${styles.user}`}>apex_alert@log: </span>
-      <span className={`${styles.command}`}>{message}</span>
-    </div>
-  );
-};
-
-const Terminal = ({ logs }) => {
-  const messagesEndRef = useRef(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [logs]);
-
-  return (
-    <div className={`${styles["cv-code"]}`}>
-      <div className={`${styles["cv-code-header"]}`}>
-        <div className={`${styles["cv-code-buttons"]}`}>
-          <span className={`${styles["fake-button"]}`} data-close />
-          <span className={`${styles["fake-button"]}`} data-minify />
-          <span className={`${styles["fake-button"]}`} data-expand />
-        </div>
-        <span className={`${styles["cv-code-title"]}`}>apex_alert@terminal: ~</span>
-      </div>
-      <div className={`${styles.content} ${styles.scrollbar}`}>
-        {logs.map((log, i) => (
-          <TerminalMessage message={log} key={`message-${i}`} />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-    </div>
-  );
-};
 
 const Toggle = ({ label, id, onClick }) => {
   return (

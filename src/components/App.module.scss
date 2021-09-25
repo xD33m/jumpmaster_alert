@@ -17,7 +17,7 @@ $red: #dc262d;
 }
 
 .app-header {
-  padding-top: 12px;
+  padding: 12px;
   height: calc(100vh - 32px); // 32px = navbar height
   bottom: 0;
   display: flex;
@@ -63,9 +63,8 @@ $background-code: white;
   border-radius: 0.5rem;
   overflow: hidden;
   background: $background-code;
-  width: calc(100% - 24px); // 24/2 = 12px margin beide Seiten
-  height: calc(100% - 12px); // 12px margin unten
-  // max-width: 100%;
+  width: calc(100%);
+  height: calc(100%);
   margin: 0 auto;
   &-header {
     display: flex;
@@ -133,9 +132,6 @@ $background-code: white;
     scroll-snap-align: end;
   }
 
-  .clear-button {
-  }
-
   .scrollbar::-webkit-scrollbar {
     background-color: #fff;
     width: 16px;
@@ -176,7 +172,7 @@ $background-code: white;
   }
 
   .toggleSection {
-    padding: 0 1rem 1rem;
+    padding-right: 12px;
   }
 }
 
