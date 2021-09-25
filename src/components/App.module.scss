@@ -1,9 +1,8 @@
+$red: #DC262D;
+
 .app-logo {
   height: 15vmin;
-  position: absolute;
-  top: 5%;
-  left: 0;
-
+  display: block;
   pointer-events: none;
 }
 
@@ -25,7 +24,6 @@
 
 .col {
   width: 50%;
-  height: 50%;
 }
 
 .app-link {
@@ -42,4 +40,102 @@
   100% {
     transform: translateY(0px)
   }
+}
+
+.leftSide {
+  display: flex;
+  flex-direction: column;
+
+  .headingSection {
+    @extend .leftSide;
+    align-items: center;
+  }
+
+  .toggleSection {
+    padding: 0 1rem 1rem;
+  }
+
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  color: darken(white, 50%);
+  margin: 1rem 0;
+}
+
+hr {
+  border-top: 1px solid rgba(128, 128, 128, 0.555);
+  margin: 1.5rem auto 0.2rem auto; 
+  
+}
+
+/*
+----------------------- Toggle ------------------------
+*/
+$circ: 1.5rem;
+$switch-height: 1.3rem;
+
+.hide{
+  display: none;
+}
+
+.toggleButton {
+  display: flex;
+  align-items: center;
+  padding: 0.3rem 0;
+}
+
+.toggle {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  padding: 2px;
+  width: $switch-height * 2.3;
+  height: $switch-height;
+  border-radius: $switch-height/2;
+  background: #d6d6d6;
+  transition: box-shadow 0.4s;
+  margin-right: 0.5rem;
+
+  &:after {
+    display: block;
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto 0;
+    width: $circ;
+    height: $circ;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition:
+      background 0.4s,
+      left 0.4s,
+      height 0.2s,
+      width 0.2s;
+  }
+}
+
+input:checked + label {
+  box-shadow: inset 0 0 0 $switch-height tint( $red, 50% );
+  background: lighten($red, 40%);
+}
+
+label:active:after,
+input:checked + label:active:after {
+  height: $switch-height/1.1;
+  width: $switch-height * 1.2;
+}
+
+input:checked + label:after {
+  left: calc(100% - #{$circ});
+  background: $red;
+}
+
+.label {
+  font-size: 1rem;
 }
