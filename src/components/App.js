@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 
 import Titlebar from "components/titlebar/Titlebar";
 
@@ -58,22 +58,38 @@ function App() {
 
       <div className={styles.app}>
         <div className={styles["app-header"]}>
-          <div className={styles.col}>
-            <img
-              src={logo}
-              className={`${styles["app-logo"]} ${socketStatus && styles["app-logo-animation"]} ${
-                status === "On" && styles.red
-              }`}
-              alt="logo"
-            />
-            <button
-              type="button"
-              className={styles.button}
-              aria-label="Increment value"
-              onClick={startAndStop}
-            >
-              {status === "On" ? "Stop" : "Start"}
-            </button>
+          <div className={`${styles.col} ${styles.leftSide}`}>
+            <div className={styles.headingSection}>
+              <img
+                src={logo}
+                className={`${styles["app-logo"]} ${
+                  socketStatus && styles["app-logo-animation"]
+                } ${status === "On" && styles.red}`}
+                alt="logo"
+              />
+              <p>Apex Jumpmaster Alert</p>
+            </div>
+            <div className={styles.toggleSection}>
+              <hr />
+              <p className={styles.sectionTitle}>General</p>
+              <Toggle
+                label="Toggle Jumpmaster Alert"
+                id="startStop"
+                onClick={startAndStop}
+              />
+              <hr />
+              <p className={styles.sectionTitle}>Settings</p>
+              <Toggle
+                label="Toggle"
+                id="1"
+                onClick={() => {
+                  console.log(1);
+                }}
+              />
+              <Toggle label="Toggle" id="2" onClick={() => {}} />
+              <Toggle label="Toggle" id="3" onClick={() => {}} />
+              <Toggle label="Toggle" id="4" onClick={() => {}} />
+            </div>
           </div>
           <div className={styles.col}>
             <Terminal logs={logs} />
@@ -92,6 +108,21 @@ const Terminal = ({ logs }) => {
       {logs.map((log, i) => (
         <p>{log}</p>
       ))}
+    </div>
+  );
+};
+
+const Toggle = ({ label, id, onClick }) => {
+  return (
+    <div className={styles.toggleButton}>
+      <input
+        className={styles.hide}
+        id={id}
+        type="checkbox"
+        onClick={onClick}
+      />
+      <label htmlFor={id} className={styles.toggle} />
+      <span className={styles.label}>{label}</span>
     </div>
   );
 };
