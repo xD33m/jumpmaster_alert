@@ -12,7 +12,6 @@ body section.titlebar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
   background-color: #eaeaea;
-  margin-bottom: 20px;
 
   div {
     display: flex;
@@ -20,7 +19,7 @@ body section.titlebar {
 
     span {
       font-size: 14px;
-      font-family: 'Roboto', sans-serif;
+      font-family: "Roboto", sans-serif;
       color: #252525;
     }
 
@@ -28,6 +27,5 @@ body section.titlebar {
       width: 20px;
       padding: 5px;
     }
-
   }
 }
