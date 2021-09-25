@@ -5,27 +5,28 @@ import numpy
 import cv2
 from lib import utils
 from lib import alerts
-from threading import Thread
+from threading import Thread, Timer
 
 currentIteration = 1
 
 
-def lookForApex(scheduler, hwnd):
-    event = scheduler.enter(1, 1, lookForApex, (scheduler, hwnd))
+def lookForApex(hwnd):
+    timer = Timer(1, lookForApex, (hwnd,))
+    timer.start()
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd != 0:
         print('Apex detected!')
-        scheduler.cancel(event)
-        detect_champion_selection(scheduler)
+        timer.cancel()
+        detect_champion_selection()
 
 
-def takeScreenshot(scheduler, isJumpmaster, event):
+def takeScreenshot(isJumpmaster, timer):
     # https://answers.opencv.org/question/229026/help-with-optimization-opencv-python/
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd == 0:
         print("Apex not found. Waiting for Apex to start...")
-        lookForApex(scheduler, hwnd)
-        scheduler.cancel(event)
+        lookForApex(hwnd)
+        timer.cancel()
         return None
 
     imgPosition = utils.getNeedlePostion(isJumpmaster)
@@ -59,8 +60,8 @@ def takeScreenshot(scheduler, isJumpmaster, event):
     return screenshot_gray
 
 
-def getImgSimilarity(scheduler, isJumpmaster, event):
-    screenshot_gray = takeScreenshot(scheduler, isJumpmaster, event)
+def getImgSimilarity(isJumpmaster, t):
+    screenshot_gray = takeScreenshot(isJumpmaster, t)
     if screenshot_gray is None:
         return None
 
@@ -77,13 +78,13 @@ def getImgSimilarity(scheduler, isJumpmaster, event):
     return max_val
 
 
-def detect_jumpmaster(scheduler):
+def detect_jumpmaster():
     global currentIteration
+    timer = Timer(1, detect_jumpmaster)
+    timer.start()
     maxIteration = 120
 
-    event = scheduler.enter(1, 1, detect_jumpmaster, scheduler)
-
-    max_val = getImgSimilarity(scheduler, True, event)
+    max_val = getImgSimilarity(True, timer)
 
     print(
         f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}", end='\r', flush=True)
@@ -95,20 +96,21 @@ def detect_jumpmaster(scheduler):
                                args=("DU BIST JUMPMASTER",))
         soundThread.start()
         discordThread.start()
-        scheduler.cancel(event)
+        timer.cancel()
         print()  # new line
-        detect_champion_selection(scheduler)
+        detect_champion_selection()
         currentIteration = 0
     elif(currentIteration == maxIteration):
-        scheduler.cancel(event)
+        timer.cancel()
         print()  # new line
-        detect_champion_selection(scheduler)
+        detect_champion_selection()
         currentIteration = 0
 
 
-def detect_champion_selection(scheduler):
-    event = scheduler.enter(20, 1, detect_champion_selection, scheduler)
-    max_val = getImgSimilarity(scheduler, False, event)
+def detect_champion_selection():
+    timer = Timer(20, detect_champion_selection)
+    timer.start()
+    max_val = getImgSimilarity(False, timer)
     if max_val is None:
         return
 
@@ -116,6 +118,6 @@ def detect_champion_selection(scheduler):
         f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}")
 
     if max_val >= 0.8:
-        scheduler.cancel(event)
+        timer.cancel()
         print()  # new line
-        detect_jumpmaster(scheduler)
+        detect_jumpmaster()
