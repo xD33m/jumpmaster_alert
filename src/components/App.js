@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
 
 import Titlebar from "components/titlebar/Titlebar";
@@ -38,7 +38,7 @@ function App() {
     });
 
     s.on("logs", (log) => {
-      const time = new Date().toTimeString().split(" ")[0];
+      const [time] = new Date().toTimeString().split(" ");
       const fullLog = { time, log };
       setLogs((prevLogs) => [...prevLogs, fullLog]);
     });
@@ -86,8 +86,8 @@ function App() {
                 console.log(1);
               }}
             />
-            <Toggle label="Toggle" id="2" onClick={() => {}} />
-            <Toggle label="Toggle" id="3" onClick={() => {}} />
+            <Toggle label="Sound Alert" id="2" onClick={() => {}} />
+            <Toggle label="Discord DM" id="3" onClick={() => {}} />
             <ThemeToggle setTheme={setTheme} />
           </div>
         </div>

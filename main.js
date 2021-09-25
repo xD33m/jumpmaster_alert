@@ -208,7 +208,8 @@ app.whenReady().then(async () => {
    * and run Flask in shell.
    */
   if (isDevMode) {
-    await installExtensions(); // React, Redux, & Devtron devTools
+    await installExtensions(); // React devTools
+
     browserWindows.loadingWindow = new BrowserWindow({ frame: false });
     createLoadingWindow().then(() => createMainWindow(port));
     spawn(`python ./backend/app.py ${port}`, { detached: true, shell: true, stdio: "inherit" });
