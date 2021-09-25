@@ -1,6 +1,6 @@
 {
-  "short_name": "Jumpmaster Detection",
-  "name": "Apex Jumpmaster Detection",
+  "short_name": "Jumpmaster Alert",
+  "name": "Apex Jumpmaster Alert",
   "icons": [
     {
       "src": "favicon.ico",

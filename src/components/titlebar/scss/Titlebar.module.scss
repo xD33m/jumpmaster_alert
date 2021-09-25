@@ -2,15 +2,15 @@
   --text: #252525;
   --background: white;
 
-  --background-header: #eee;
+  --background-header: white;
   --image-color: invert(0%);
 }
 
 .dark {
   --text: white;
-  --background: #202124;
+  --background: #1f1e1e;
 
-  --background-header: #393d3e;
+  --background-header: #1f1e1e;
   --image-color: invert(100%);
 }
 
@@ -28,6 +28,7 @@ body section.titlebar {
   -webkit-user-select: none;
   -webkit-app-region: drag;
   background-color: var(--background-header);
+  border-bottom: 1px solid rgba(128, 128, 128, 0.555);
 
   div {
     display: flex;
