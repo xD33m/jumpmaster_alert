@@ -1,4 +1,5 @@
 const { spawnSync } = require("child_process");
+
 const spawnOptions = { detached: false, shell: true, stdio: "inherit" };
 
 /**
@@ -26,8 +27,8 @@ class Builder {
 
     const app = "./backend/app.py";
     const icon = "./public/favicon.ico";
-    const images = "./backend/images;images";
-    const sounds = "./backend/sounds;sounds";
+    const images = "./backend/lib/images;images";
+    const sounds = "./backend/lib/sounds;sounds";
     const env = "./backend/.env;.";
 
     const options = [
