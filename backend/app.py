@@ -1,3 +1,4 @@
+from engineio.async_drivers import threading  # needed for pyinstaller
 import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
