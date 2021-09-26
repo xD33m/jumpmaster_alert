@@ -1,10 +1,10 @@
 import json
 import requests
 import os
-from playsound import playsound
+import winsound
 from random import randrange
 from lib.utils import getEnvId, resource_path
-
+import time
 soundActivated = False
 discordDMActivated = False
 
@@ -34,9 +34,11 @@ def sendDiscordDM(message):
 
 
 def playRandomSound():
-    randomIndex = randrange(8)  # 0-7
-    soundToPlay = resource_path(f'..\\sounds\\voice{randomIndex+1}.wav')
-    playsound(soundToPlay)
+    randomIndex = randrange(1, 8)
+    filename = "voice{}.wav".format(randomIndex)
+    file = os.path.join('..', 'sounds', filename)
+    soundToPlay = resource_path(file)
+    winsound.PlaySound(soundToPlay, winsound.SND_FILENAME)
 
 
 def updateNotificationSettings(variable, value):
