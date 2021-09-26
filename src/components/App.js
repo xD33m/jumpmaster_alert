@@ -17,6 +17,7 @@ function App() {
   const [soundActivated, setSoundActivated] = useState(false);
   const [dicordDM, setDiscordDM] = useState(false);
   const [socket, setSocket] = useState();
+  const [detectionRunning, setDetectionRunning] = useState(0);
 
   useEffect(() => {
     const s = io(`http://localhost:${port}`);
@@ -36,6 +37,14 @@ function App() {
       const [time] = new Date().toTimeString().split(" ");
       const fullLog = { time, log };
       setLogs((prevLogs) => [...prevLogs, fullLog]);
+    });
+
+    s.on("jumpmaster_log", (message) => {
+      if (!detectionRunning && message.status === "start") {
+        setDetectionRunning(true);
+      } else if (message.status === "end") {
+        setDetectionRunning(false);
+      }
     });
 
     return () => {
@@ -90,7 +99,7 @@ function App() {
           />
         </div>
         <div className={styles.col}>
-          <Terminal logs={logs} setLogs={setLogs} />
+          <Terminal logs={logs} setLogs={setLogs} detectionRunning={detectionRunning} />
         </div>
       </div>
     </div>

@@ -2,6 +2,8 @@
   --text: #252525;
   --background: white;
 
+  --button-color: #252525;
+  --button-background-hover-color: rgb(225, 225, 225);
   --background-header: white;
   --image-color: invert(0%);
 }
@@ -9,6 +11,9 @@
 .dark {
   --text: white;
   --background: #1f1e1e;
+
+  --button-color: white;
+  --button-background-hover-color: rgba(230, 230, 230, 0.459);
 
   --background-header: #1f1e1e;
   --image-color: invert(100%);
