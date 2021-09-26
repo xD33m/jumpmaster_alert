@@ -98,8 +98,9 @@ def detect_jumpmaster():
 
     max_val = getImgSimilarity(True)
 
-    sockets.emitEvent("logs",
-                      f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
+    # sockets.emitEvent("logs",
+    #                   f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
+    sockets.emitEvent("jumpmaster_log", {"status": "start"})
 
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
@@ -109,10 +110,13 @@ def detect_jumpmaster():
         jumpmasterTimer.cancel()
         detect_champion_selection()
         currentIteration = 0
+        sockets.emitEvent("jumpmaster_log", {"status": "end"})
+
     elif(currentIteration == maxIteration):
         jumpmasterTimer.cancel()
         detect_champion_selection()
         currentIteration = 0
+        sockets.emitEvent("jumpmaster_log", {"status": "end"})
 
 
 def detect_champion_selection():
