@@ -1,19 +1,19 @@
 .button {
   padding: 0 25px;
   -webkit-app-region: no-drag;
-  color: #252525;
+  color: var(--button-color);
   border-radius: 0;
 
   &:hover {
-    background-color: rgb(225, 225, 225);
-    color: #252525;
+    background-color: var(--button-background-hover-color);
+    color: var(--button-color);
   }
 
   &:last-child {
     &:hover {
       background-color: #ff0000;
       span {
-        color: #f5f5f5;
+        color: var(--button-color);
       }
     }
   }
@@ -35,8 +35,8 @@
   align-items: center;
 
   &:hover {
-    background-color: rgb(225, 225, 225);
-    color: #252525;
+    background-color: var(--button-background-hover-color);
+    color: var(--button-color);
   }
 }
 
@@ -45,7 +45,7 @@
 
   span {
     width: 11px;
-    border-top: solid 1px #252525;
+    border-top: solid 1px var(--button-color);
   }
 }
 
@@ -55,7 +55,7 @@
   span {
     width: 10px;
     height: 10px;
-    border: solid 1px #252525;
+    border: solid 1px var(--button-color);
   }
 }
 
@@ -65,8 +65,8 @@
   span {
     width: 7px;
     height: 7px;
-    border: solid 1px #252525;
-    
+    border: solid 1px var(--button-color);
+
     &:first-child {
       margin-bottom: -4px;
       margin-right: -2.5px;
@@ -83,7 +83,7 @@
 
   &:hover {
     span:first-child {
-      background-color: rgb(225, 225, 225);
+      background-color: var(--button-background-hover-color);
     }
   }
 }
@@ -94,7 +94,7 @@
   span {
     width: 15px;
     height: 1px;
-    border-top: solid 1px #252525;
+    border-top: solid 1px var(--button-color);
 
     &:first-child {
       transform: rotate(45deg);
@@ -110,7 +110,7 @@
   &:hover {
     background-color: #ff0000;
     span {
-      border-top: solid 2px #f5f5f5;
+      border-top: solid 2px white;
     }
   }
 }
