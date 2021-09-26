@@ -30,4 +30,3 @@ Flask
 flask-cors
 pyinstaller
 Flask-SocketIO
-gevent-websocket
