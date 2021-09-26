@@ -48,23 +48,6 @@ def example():
 """
 
 
-@app.route("/start")
-def start():
-    print("Jumpmaster alert started\n")
-    # https://stackoverflow.com/a/474543
-    detect_champion_selection()
-
-    return jsonify("App has startet")
-
-
-@app.route("/stop")
-def stop():
-    print("Jumpmaster alert stopped\n")
-    cancelAllTimers()
-
-    return jsonify("App has stopped")
-
-
 @app.route("/quit")
 def quit():
     cancelAllTimers()
