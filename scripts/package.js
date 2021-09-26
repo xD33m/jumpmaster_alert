@@ -127,7 +127,7 @@ class Packager {
       outputDirectory: path("../dist/windows/setup"),
       description: "Apex Jumpmaster Alert",
       exe: "app",
-      manufacturer: "Julius Lucas Felix",
+      manufacturer: "Apex Jumpmaster Alert",
       name: "Apex Jumpmaster Alert",
       ui: {
         chooseDirectory: true,
