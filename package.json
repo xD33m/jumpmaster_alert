@@ -2,7 +2,6 @@
   "author": "Daniel Wade",
   "description": "Started template for Electron, React, Python app",
   "dependencies": {
-    "@reduxjs/toolkit": "^1.1.0",
     "axios": "^0.21.1",
     "electron-is-dev": "^2.0.0",
     "get-port": "^5.1.1",
@@ -14,9 +13,6 @@
     "socket.io-client": "^4.2.0"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^12.1.0",
-    "@testing-library/user-event": "^13.2.1",
     "babel-eslint": "^10.1.0",
     "cross-env": "^7.0.3",
     "electron": "^15.0.0",
@@ -29,7 +25,6 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-standard": "^5.0.0",
-    "jsdoc": "^3.6.5",
     "sass": "^1.26.5"
   },
   "optionalDependencies": {
