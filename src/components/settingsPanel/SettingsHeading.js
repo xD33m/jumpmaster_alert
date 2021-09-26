@@ -8,8 +8,8 @@ const SettingsHeading = ({ darkTheme, status, socketStatus }) => {
       <img
         src={logo}
         className={`${styles["app-logo"]} ${socketStatus && styles["app-logo-animation"]} ${
-          status === "On" && styles.red
-        } ${darkTheme && status === "Off" && styles.white}`}
+          status === true && styles.red
+        } ${darkTheme && status === false && styles.white}`}
         alt="logo"
       />
       <p>Apex Jumpmaster Alert</p>
