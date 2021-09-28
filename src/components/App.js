@@ -17,7 +17,8 @@ function App() {
   const [soundActivated, setSoundActivated] = useState(false);
   const [dicordDM, setDiscordDM] = useState(false);
   const [socket, setSocket] = useState();
-  const [detectionRunning, setDetectionRunning] = useState(0);
+  const [jumpDetectionRunning, setJumpDetectionRunning] = useState(false);
+  const [charDetectionRunning, setCharDetectionRunning] = useState(false);
 
   useEffect(() => {
     const s = io(`http://localhost:${port}`);
@@ -35,16 +36,29 @@ function App() {
 
     s.on("logs", (log) => {
       const [time] = new Date().toTimeString().split(" ");
-      const fullLog = { time, log };
+      const fullLog = { time, message, loading, type };
+      if (type === "jumpDetection" && loading === false) {
+        // letzten log eintrag im state auf 'loading = false' setzten
+        const reverseArr = [...prevLogs].reverse()
+        reverseArr.find(log => log.type === 'jumpDetection').loading = false
+        const newArr = reverseArr.reverse()
+        setLogs(newArr)
+      }
       setLogs((prevLogs) => [...prevLogs, fullLog]);
     });
 
-    s.on("jumpmaster_log", (message) => {
-      if (!detectionRunning && message.status === "start") {
-        setDetectionRunning(true);
-      } else if (message.status === "end") {
-        setDetectionRunning(false);
-      }
+    s.on("detection_log", ({ jumpDetection, charDetection }) => {
+      console.log(jumpDetection, charDetection);
+      setJumpDetectionRunning(jumpDetection);
+      setCharDetectionRunning(charDetection);
+      // if (!jumpDetectionRunning && jumpDetection === true) {
+      // } else if (jumpDetection === false) {
+      //   setJumpDetectionRunning(false);
+      // }
+
+      // if(!charDetectionRunning && charDetection === true){
+
+      // }
     });
 
     return () => {
@@ -99,7 +113,12 @@ function App() {
           />
         </div>
         <div className={styles.col}>
-          <Terminal logs={logs} setLogs={setLogs} detectionRunning={detectionRunning} />
+          <Terminal
+            logs={logs}
+            setLogs={setLogs}
+            jumpDetectionRunning={jumpDetectionRunning}
+            charDetectionRunning={charDetectionRunning}
+          />
         </div>
       </div>
     </div>
@@ -107,3 +126,41 @@ function App() {
 }
 
 export default App;
+
+
+{
+  message: Looking for Champion
+  time:
+  loading: true
+  id: 12345
+}
+
+
+{
+  message: Looking for Champion
+  time:
+  loading: false
+  id: 12345
+}
+
+Jumpermastr geufunden
+
+{
+  message: Looking for Champion
+  time:
+  loading: true
+  id: 3298312
+}
+
+{
+  message: Looking for Champion
+  time:
+  loading: true
+  id: 3298312
+}
+
+// [Logs mit uniqueID]
+
+// logs.map
+  // Logs Komponente (mit id) loading = true / false
+  // loading ? <Spinner />

@@ -1,22 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "components/terminal/Terminal.module.scss";
+import { PushSpinner } from "react-spinners-kit";
 import TerminalMessage from "./TerminalMessage";
 
-const Terminal = ({ logs, detectionRunning, setLogs }) => {
+const Terminal = ({ logs, jumpDetectionRunning, charDetectionRunning, setLogs }) => {
   const messagesEndRef = useRef(null);
 
   const [timer, setTimer] = useState(0);
-  const [currentStatus, setCurrentStatus] = useState(detectionRunning);
+  const [currentJumpStatus, setCurrentJumpStatus] = useState(jumpDetectionRunning);
+  const [currentCharStatus, setCurrentCharStatus] = useState(charDetectionRunning);
   const [currentInterval, setCurrentInterval] = useState();
+  const [loading, setLoading] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    if (detectionRunning !== currentStatus) {
-      setCurrentStatus(detectionRunning);
-      if (detectionRunning) {
+    if (jumpDetectionRunning !== currentJumpStatus) {
+      setCurrentJumpStatus(jumpDetectionRunning);
+      if (jumpDetectionRunning) {
         if (!currentInterval) {
           const interval = setInterval(() => setTimer((prevVal) => prevVal + 1), 1000);
           setCurrentInterval(interval);
@@ -28,13 +31,13 @@ const Terminal = ({ logs, detectionRunning, setLogs }) => {
       }
     }
     scrollToBottom();
-  }, [logs, detectionRunning, currentInterval]);
+  }, [logs, jumpDetectionRunning, currentInterval]);
 
   const updateLogs = (count) => {
     const [time] = new Date().toTimeString().split(" ");
     const fullLog = { time, log: `Looking for jumpmster... (${count}/120)` };
     const lastLog = logs[logs.length - 1];
-    if (count > 1 && lastLog.log.includes("Looking")) {
+    if (count > 1 && lastLog.log.includes("jumpmster")) {
       logs.pop();
     }
     if (count !== 0) {
@@ -45,6 +48,33 @@ const Terminal = ({ logs, detectionRunning, setLogs }) => {
   useEffect(() => {
     updateLogs(timer);
   }, [timer]);
+
+  useEffect(() => {
+    if (charDetectionRunning !== currentCharStatus) {
+      setCurrentCharStatus(charDetectionRunning);
+      const [time] = new Date().toTimeString().split(" ");
+      let fullLog = "";
+      if (charDetectionRunning) {
+        setLoading(true);
+        fullLog = {
+          time,
+          log: (
+            <span className={`${styles.terminalMessage}`}>
+              Looking for champion selection...
+              <PushSpinner size={10} color="#686769" loading={false} />
+            </span>
+          ),
+        };
+      } else {
+        setLoading(false);
+        fullLog = {
+          time,
+          log: "Champion selection found !",
+        };
+      }
+      setLogs((prevLogs) => [...prevLogs, fullLog]);
+    }
+  }, [charDetectionRunning]);
 
   return (
     <div className={`${styles["cv-code"]}`}>

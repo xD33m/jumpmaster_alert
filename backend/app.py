@@ -85,6 +85,8 @@ def handle_message(message):
             socketio.emit('status', {
                 'data': 'Stopping Jumpmaster alert', 'status': False})
             socketio.emit('logs', "Jumpmaster alert stopped")
+            socketio.emit("detection_log", {
+                "jumpDetection": False, "charDetection": False})
         if(message["type"] == "sound"):
             alerts.updateNotificationSettings(
                 message["type"], message["status"])
@@ -99,6 +101,8 @@ def handle_message(message):
             detect_champion_selection()
             socketio.emit('status', {
                 'data': 'Starting Jumpmaster alert', 'status': True})
+            socketio.emit("detection_log", {
+                "jumpDetection": False, "charDetection": True})
         if(message["type"] == "sound"):
             alerts.updateNotificationSettings(
                 message["type"], message["status"])

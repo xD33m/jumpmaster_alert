@@ -98,9 +98,8 @@ def detect_jumpmaster():
 
     max_val = getImgSimilarity(True)
 
-    # sockets.emitEvent("logs",
-    #                   f"Jumpmaster detected: {'true  ' if max_val >= 0.8 else 'false'} - {currentIteration}/{maxIteration}")
-    sockets.emitEvent("jumpmaster_log", {"status": "start"})
+    # sockets.emitEvent("detection_log", {
+    #     "jumpDetection": True, "charDetection": False})
 
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
@@ -108,15 +107,16 @@ def detect_jumpmaster():
                                    args=("DU BIST JUMPMASTER",))
         notifcationThread.start()
         jumpmasterTimer.cancel()
+        sockets.emitEvent("detection_log", {
+                          "jumpDetection": False, "charDetection": True})
         detect_champion_selection()
         currentIteration = 0
-        sockets.emitEvent("jumpmaster_log", {"status": "end"})
 
     elif(currentIteration == maxIteration):
         jumpmasterTimer.cancel()
         detect_champion_selection()
         currentIteration = 0
-        sockets.emitEvent("jumpmaster_log", {"status": "end"})
+        sockets.emitEvent("detection_log", {"status": "end"})
 
 
 def detect_champion_selection():
@@ -127,11 +127,10 @@ def detect_champion_selection():
     if max_val is None:
         return
 
-    sockets.emitEvent(
-        "logs", f"Champion selection detected: {'true  ' if max_val >= 0.8 else 'false'}")
-
     if max_val >= 0.8:
         champSelectTimer.cancel()
+        sockets.emitEvent("detection_log", {
+                          "jumpDetection": True, "charDetection": False})
         detect_jumpmaster()
 
 
