@@ -1,12 +1,15 @@
-from engineio.async_drivers import threading  # needed for pyinstaller
-import sys
-from flask import Flask, jsonify, request
-from flask_cors import CORS
-from DetectJumpmaster import detect_champion_selection, cancelAllTimers
-from lib import utils
-from lib import alerts
-from lib import sockets
+
 from threading import Thread, Event
+from lib import sockets
+from lib import alerts
+from lib import utils
+from DetectJumpmaster import detect_champion_selection, cancelAllTimers
+from flask_cors import CORS
+from flask import Flask, jsonify, request
+import sys
+from engineio.async_drivers import threading  # needed for pyinstaller
+from gevent.pywsgi import WSGIServer
+from geventwebsocket.handler import WebSocketHandler
 
 
 app = Flask(__name__)
@@ -115,7 +118,15 @@ def default_error_handler(e):
     print(e)
 
 
+def run_server():
+    if app_config["debug"] is True:
+        socketio.run(app, debug=True,
+                     host=app_config["host"], port=int(app_config["port"]))
+    else:
+        server = WSGIServer(('0.0.0.0', int(app_config["port"])), app,
+                            handler_class=WebSocketHandler)
+        server.serve_forever()
+
+
 if __name__ == "__main__":
-    # app.run(**app_config)
-    socketio.run(app, debug=True,
-                 host=app_config["host"], port=int(app_config["port"]))
+    run_server()
