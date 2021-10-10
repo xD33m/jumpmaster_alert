@@ -23,6 +23,7 @@ def lookForApex(hwnd):
     if hwnd != 0:
         sockets.emitEvent("logs", 'Apex detected!')
         lookForApexTimer.cancel()
+        sockets.resetDetection()
         detect_champion_selection()
 
 
@@ -39,7 +40,6 @@ def takeScreenshot(isJumpmaster):
             jumpmasterTimer.cancel()
 
         return None
-
     imgPosition = utils.getNeedlePostion(isJumpmaster)
 
     imgLeft = imgPosition['left']
@@ -107,8 +107,9 @@ def detect_jumpmaster():
                                    args=("DU BIST JUMPMASTER",))
         notifcationThread.start()
         jumpmasterTimer.cancel()
-        sockets.emitEvent("detection_log", {
-                          "jumpDetection": False, "charDetection": True})
+        # sockets.emitEvent("detection_log", {
+        #                   "jumpDetection": False, "charDetection": True})
+        # sockets.emitDetectionEvent(championDetection=True)
         detect_champion_selection()
         currentIteration = 0
 
@@ -116,12 +117,16 @@ def detect_jumpmaster():
         jumpmasterTimer.cancel()
         detect_champion_selection()
         currentIteration = 0
-        sockets.emitEvent("detection_log", {"status": "end"})
+        # sockets.emitEvent("detection_log", {"status": "end"})
+        # TODO: Hier noch ein emit senden?
 
 
 def detect_champion_selection():
+    print("Champion selection detection started")
+    if(win32gui.FindWindow(None, 'Apex Legends') != 0):
+        sockets.emitDetectionEvent(championDetection=True)
     global champSelectTimer
-    champSelectTimer = Timer(20, detect_champion_selection)
+    champSelectTimer = Timer(1, detect_champion_selection)
     champSelectTimer.start()
     max_val = getImgSimilarity(False)
     if max_val is None:
@@ -129,8 +134,9 @@ def detect_champion_selection():
 
     if max_val >= 0.8:
         champSelectTimer.cancel()
-        sockets.emitEvent("detection_log", {
-                          "jumpDetection": True, "charDetection": False})
+        # sockets.emitEvent("detection_log", {
+        #                   "jumpDetection": True, "charDetection": False})
+        sockets.emitDetectionEvent(jumpmasterDetection=True)
         detect_jumpmaster()
 
 

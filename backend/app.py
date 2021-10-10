@@ -82,11 +82,8 @@ def handle_message(message):
     if (message["status"] == False):
         if(message["type"] == "startAndStop"):
             cancelAllTimers()
-            socketio.emit('status', {
-                'data': 'Stopping Jumpmaster alert', 'status': False})
+            sockets.resetDetection()
             socketio.emit('logs', "Jumpmaster alert stopped")
-            socketio.emit("detection_log", {
-                "jumpDetection": False, "charDetection": False})
         if(message["type"] == "sound"):
             alerts.updateNotificationSettings(
                 message["type"], message["status"])
@@ -99,10 +96,6 @@ def handle_message(message):
     elif (message["status"] == True):
         if(message["type"] == "startAndStop"):
             detect_champion_selection()
-            socketio.emit('status', {
-                'data': 'Starting Jumpmaster alert', 'status': True})
-            socketio.emit("detection_log", {
-                "jumpDetection": False, "charDetection": True})
         if(message["type"] == "sound"):
             alerts.updateNotificationSettings(
                 message["type"], message["status"])
@@ -111,7 +104,6 @@ def handle_message(message):
             alerts.updateNotificationSettings(
                 message["type"], message["status"])
             socketio.emit('logs', "Discord DM activated")
-
     else:
         print("Unknown command")
 

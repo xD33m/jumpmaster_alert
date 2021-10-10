@@ -18,7 +18,21 @@ function App() {
   const [dicordDM, setDiscordDM] = useState(false);
   const [socket, setSocket] = useState();
   const [jumpDetectionRunning, setJumpDetectionRunning] = useState(false);
-  const [charDetectionRunning, setCharDetectionRunning] = useState(false);
+
+  const toggleLoading = (prevLogs, type) => {
+    const oppositeType = type === "jumpmaster" ? "champion" : "jumpmaster";
+    console.log(`logs (toggle)`, logs);
+    const reverseArr = [...prevLogs].reverse();
+    console.log(`reverseArr`, reverseArr);
+    // if reverseArr contains oppositeType, change it's loading status to false
+    if (reverseArr.find((log) => log.type === oppositeType)) {
+      const index = reverseArr.findIndex((log) => log.type === oppositeType);
+      reverseArr[index].loading = false;
+    }
+    const updatedArr = reverseArr.reverse();
+    console.log(`updatedArr`, updatedArr);
+    return updatedArr;
+  };
 
   useEffect(() => {
     const s = io(`http://localhost:${port}`);
@@ -36,21 +50,49 @@ function App() {
 
     s.on("logs", (log) => {
       const [time] = new Date().toTimeString().split(" ");
-      const fullLog = { time, message, loading, type };
-      if (type === "jumpDetection" && loading === false) {
-        // letzten log eintrag im state auf 'loading = false' setzten
-        const reverseArr = [...prevLogs].reverse()
-        reverseArr.find(log => log.type === 'jumpDetection').loading = false
-        const newArr = reverseArr.reverse()
-        setLogs(newArr)
-      }
+      const fullLog = { time, message: log };
+      // if (type === "jumpDetection" && loading === false) {
+      //   // letzten log eintrag im state auf 'loading = false' setzten
+      //   const reverseArr = [...prevLogs].reverse();
+      //   reverseArr.find((log) => log.type === "jumpDetection").loading = false;
+      //   const newArr = reverseArr.reverse();
+      //   setLogs(newArr);
+      // }
       setLogs((prevLogs) => [...prevLogs, fullLog]);
     });
 
-    s.on("detection_log", ({ jumpDetection, charDetection }) => {
-      console.log(jumpDetection, charDetection);
-      setJumpDetectionRunning(jumpDetection);
-      setCharDetectionRunning(charDetection);
+    s.on("detection_log", (detectionLog) => {
+      const [time] = new Date().toTimeString().split(" ");
+      const { type, message, loading } = detectionLog;
+      const fullLog = { time, message, loading, type };
+
+      setLogs((prevLogs) => {
+        const updatedArr = toggleLoading(prevLogs, type);
+        return [...updatedArr, fullLog];
+      });
+
+      if (type === "jumpmaster" && loading === true) {
+        setJumpDetectionRunning(true);
+      } else if (type === "champion" && loading === true) {
+        console.log("charDetectionRunning");
+        setJumpDetectionRunning(false);
+      }
+
+      // // check if there is something to update
+      // if (loading === false && logs.filter((log) => log.loading === true).length > 0) {
+      //   const updatedLogs = stopLoadingLog(type);
+      //   setLogs(updatedLogs);
+
+      // } else {
+      //   setLogs((prevLogs) => [...prevLogs, fullLog]);
+      // }
+
+      // check if there is
+
+      // setLogs((prevLogs) => [...prevLogs, fullLog]);
+      // console.log(jumpDetection, charDetection);
+      // setJumpDetectionRunning(jumpDetection);
+      // setCharDetectionRunning(charDetection);
       // if (!jumpDetectionRunning && jumpDetection === true) {
       // } else if (jumpDetection === false) {
       //   setJumpDetectionRunning(false);
@@ -66,10 +108,23 @@ function App() {
     };
   }, []);
 
+  const removeAllLoadingStates = () => {
+    setLogs(
+      logs.map((log) => {
+        if (log?.loading === true) {
+          log.loading = false;
+          return log;
+        }
+        return log;
+      })
+    );
+  };
+
   const startAndStop = () => {
     if (status === true) {
       socket.emit("toggle", { type: "startAndStop", status: false });
       setStatus(false);
+      removeAllLoadingStates();
     } else {
       socket.emit("toggle", { type: "startAndStop", status: true });
       setStatus(true);
@@ -117,7 +172,8 @@ function App() {
             logs={logs}
             setLogs={setLogs}
             jumpDetectionRunning={jumpDetectionRunning}
-            charDetectionRunning={charDetectionRunning}
+            setJumpDetectionRunning={setJumpDetectionRunning}
+            removeAllLoadingStates={removeAllLoadingStates}
           />
         </div>
       </div>
@@ -126,41 +182,3 @@ function App() {
 }
 
 export default App;
-
-
-{
-  message: Looking for Champion
-  time:
-  loading: true
-  id: 12345
-}
-
-
-{
-  message: Looking for Champion
-  time:
-  loading: false
-  id: 12345
-}
-
-Jumpermastr geufunden
-
-{
-  message: Looking for Champion
-  time:
-  loading: true
-  id: 3298312
-}
-
-{
-  message: Looking for Champion
-  time:
-  loading: true
-  id: 3298312
-}
-
-// [Logs mit uniqueID]
-
-// logs.map
-  // Logs Komponente (mit id) loading = true / false
-  // loading ? <Spinner />
