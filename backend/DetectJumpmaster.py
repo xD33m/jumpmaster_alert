@@ -98,18 +98,13 @@ def detect_jumpmaster():
 
     max_val = getImgSimilarity(True)
 
-    # sockets.emitEvent("detection_log", {
-    #     "jumpDetection": True, "charDetection": False})
-
     currentIteration = currentIteration + 1
     if (max_val >= 0.8):
         notifcationThread = Thread(target=alerts.sendNotification,
                                    args=("DU BIST JUMPMASTER",))
         notifcationThread.start()
         jumpmasterTimer.cancel()
-        # sockets.emitEvent("detection_log", {
-        #                   "jumpDetection": False, "charDetection": True})
-        # sockets.emitDetectionEvent(championDetection=True)
+
         detect_champion_selection()
         currentIteration = 0
 
@@ -117,8 +112,6 @@ def detect_jumpmaster():
         jumpmasterTimer.cancel()
         detect_champion_selection()
         currentIteration = 0
-        # sockets.emitEvent("detection_log", {"status": "end"})
-        # TODO: Hier noch ein emit senden?
 
 
 def detect_champion_selection():
@@ -134,8 +127,6 @@ def detect_champion_selection():
 
     if max_val >= 0.8:
         champSelectTimer.cancel()
-        # sockets.emitEvent("detection_log", {
-        #                   "jumpDetection": True, "charDetection": False})
         sockets.emitDetectionEvent(jumpmasterDetection=True)
         detect_jumpmaster()
 

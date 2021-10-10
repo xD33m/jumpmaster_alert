@@ -21,16 +21,15 @@ function App() {
 
   const toggleLoading = (prevLogs, type) => {
     const oppositeType = type === "jumpmaster" ? "champion" : "jumpmaster";
-    console.log(`logs (toggle)`, logs);
     const reverseArr = [...prevLogs].reverse();
-    console.log(`reverseArr`, reverseArr);
+
     // if reverseArr contains oppositeType, change it's loading status to false
     if (reverseArr.find((log) => log.type === oppositeType)) {
       const index = reverseArr.findIndex((log) => log.type === oppositeType);
       reverseArr[index].loading = false;
     }
+
     const updatedArr = reverseArr.reverse();
-    console.log(`updatedArr`, updatedArr);
     return updatedArr;
   };
 
@@ -51,13 +50,6 @@ function App() {
     s.on("logs", (log) => {
       const [time] = new Date().toTimeString().split(" ");
       const fullLog = { time, message: log };
-      // if (type === "jumpDetection" && loading === false) {
-      //   // letzten log eintrag im state auf 'loading = false' setzten
-      //   const reverseArr = [...prevLogs].reverse();
-      //   reverseArr.find((log) => log.type === "jumpDetection").loading = false;
-      //   const newArr = reverseArr.reverse();
-      //   setLogs(newArr);
-      // }
       setLogs((prevLogs) => [...prevLogs, fullLog]);
     });
 
@@ -74,33 +66,8 @@ function App() {
       if (type === "jumpmaster" && loading === true) {
         setJumpDetectionRunning(true);
       } else if (type === "champion" && loading === true) {
-        console.log("charDetectionRunning");
         setJumpDetectionRunning(false);
       }
-
-      // // check if there is something to update
-      // if (loading === false && logs.filter((log) => log.loading === true).length > 0) {
-      //   const updatedLogs = stopLoadingLog(type);
-      //   setLogs(updatedLogs);
-
-      // } else {
-      //   setLogs((prevLogs) => [...prevLogs, fullLog]);
-      // }
-
-      // check if there is
-
-      // setLogs((prevLogs) => [...prevLogs, fullLog]);
-      // console.log(jumpDetection, charDetection);
-      // setJumpDetectionRunning(jumpDetection);
-      // setCharDetectionRunning(charDetection);
-      // if (!jumpDetectionRunning && jumpDetection === true) {
-      // } else if (jumpDetection === false) {
-      //   setJumpDetectionRunning(false);
-      // }
-
-      // if(!charDetectionRunning && charDetection === true){
-
-      // }
     });
 
     return () => {
