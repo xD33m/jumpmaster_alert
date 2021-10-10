@@ -119,7 +119,7 @@ def detect_champion_selection():
     if(win32gui.FindWindow(None, 'Apex Legends') != 0):
         sockets.emitDetectionEvent(championDetection=True)
     global champSelectTimer
-    champSelectTimer = Timer(1, detect_champion_selection)
+    champSelectTimer = Timer(20, detect_champion_selection)
     champSelectTimer.start()
     max_val = getImgSimilarity(False)
     if max_val is None:
