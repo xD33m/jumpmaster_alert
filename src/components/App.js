@@ -33,6 +33,17 @@ function App() {
     return updatedArr;
   };
 
+  const removeAllLoadingStates = () => {
+    setLogs((prevLogs) =>
+      prevLogs.map((log) => {
+        if (log?.loading === true) {
+          log.loading = false;
+          return log;
+        }
+        return log;
+      }));
+  };
+
   useEffect(() => {
     const s = io(`http://localhost:${port}`);
     setSocket(s);
@@ -45,6 +56,10 @@ function App() {
     s.on("disconnect", () => {
       setSocketStatus(false);
       console.log("Disconnected to socket");
+    });
+
+    s.on("stop_loading", () => {
+      removeAllLoadingStates();
     });
 
     s.on("logs", (log) => {
@@ -74,18 +89,6 @@ function App() {
       s.close();
     };
   }, []);
-
-  const removeAllLoadingStates = () => {
-    setLogs(
-      logs.map((log) => {
-        if (log?.loading === true) {
-          log.loading = false;
-          return log;
-        }
-        return log;
-      })
-    );
-  };
 
   const startAndStop = () => {
     if (status === true) {

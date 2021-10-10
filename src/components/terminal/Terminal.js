@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "components/terminal/Terminal.module.scss";
-import { PushSpinner } from "react-spinners-kit";
-import TerminalMessage from "./TerminalMessage";
 import { useInterval } from "utils/hooks";
+import TerminalMessage from "./TerminalMessage";
 
 const Terminal = ({
   logs,

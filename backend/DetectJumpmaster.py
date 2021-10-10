@@ -31,6 +31,7 @@ def takeScreenshot(isJumpmaster):
     # https://answers.opencv.org/question/229026/help-with-optimization-opencv-python/
     hwnd = win32gui.FindWindow(None, 'Apex Legends')
     if hwnd == 0:
+        sockets.emitEvent("stop_loading", "apex not found")
         sockets.emitEvent("logs",
                           "Apex not found. Waiting for Apex to start...")
         lookForApex(hwnd)
