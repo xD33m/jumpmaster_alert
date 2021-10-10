@@ -1,50 +1,69 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "components/terminal/Terminal.module.scss";
+import { useInterval } from "utils/hooks";
 import TerminalMessage from "./TerminalMessage";
 
-const Terminal = ({ logs, detectionRunning, setLogs }) => {
+const Terminal = ({
+  logs,
+  setLogs,
+  jumpDetectionRunning,
+  setJumpDetectionRunning,
+  removeAllLoadingStates,
+}) => {
   const messagesEndRef = useRef(null);
 
-  const [timer, setTimer] = useState(0);
-  const [currentStatus, setCurrentStatus] = useState(detectionRunning);
-  const [currentInterval, setCurrentInterval] = useState();
+  const [count, setCount] = useState(0);
+
+  useInterval(
+    () => {
+      const [time] = new Date().toTimeString().split(" ");
+      const fullLog = {
+        time,
+        message: `Looking for jumpmaster... (${count}/120)`,
+        loading: true,
+        type: "jumpmaster",
+      };
+      const lastLog = logs[logs.length - 1];
+
+      // Increase Counter
+      setCount((prevCount) => prevCount + 1);
+
+      if (lastLog.message.includes("jumpmaster")) {
+        // Replace last log with new counter
+        setLogs((prevLogs) => {
+          return [...prevLogs.filter((log) => log !== lastLog), fullLog];
+        });
+      } else {
+        // if something went inbetween the last log and the current log
+        removeAllLoadingStates();
+        // Print on new line
+        setLogs((prevLogs) => {
+          return [...prevLogs, fullLog];
+        });
+      }
+
+      if (count === 120) {
+        // just to be sure
+        setJumpDetectionRunning(false);
+        setCount(0);
+      }
+    },
+    jumpDetectionRunning ? 1000 : null
+  );
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    if (detectionRunning !== currentStatus) {
-      setCurrentStatus(detectionRunning);
-      if (detectionRunning) {
-        if (!currentInterval) {
-          const interval = setInterval(() => setTimer((prevVal) => prevVal + 1), 1000);
-          setCurrentInterval(interval);
-        }
-      } else {
-        clearInterval(currentInterval);
-        setCurrentInterval(null);
-        setTimer(0);
-      }
-    }
     scrollToBottom();
-  }, [logs, detectionRunning, currentInterval]);
-
-  const updateLogs = (count) => {
-    const [time] = new Date().toTimeString().split(" ");
-    const fullLog = { time, log: `Looking for jumpmster... (${count}/120)` };
-    const lastLog = logs[logs.length - 1];
-    if (count > 1 && lastLog.log.includes("Looking")) {
-      logs.pop();
-    }
-    if (count !== 0) {
-      setLogs((prevLogs) => [...prevLogs, fullLog]);
-    }
-  };
+  }, [logs]);
 
   useEffect(() => {
-    updateLogs(timer);
-  }, [timer]);
+    if (!jumpDetectionRunning) {
+      setCount(0);
+    }
+  }, [jumpDetectionRunning]);
 
   return (
     <div className={`${styles["cv-code"]}`}>
@@ -58,7 +77,7 @@ const Terminal = ({ logs, detectionRunning, setLogs }) => {
       </div>
       <div className={`${styles.content} ${styles.scrollbar}`}>
         {logs.map((log, i) => (
-          <TerminalMessage message={log} key={`message-${i}`} />
+          <TerminalMessage log={log} key={`message-${i}`} />
         ))}
         <div ref={messagesEndRef} />
       </div>

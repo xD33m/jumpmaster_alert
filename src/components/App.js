@@ -17,7 +17,32 @@ function App() {
   const [soundActivated, setSoundActivated] = useState(false);
   const [dicordDM, setDiscordDM] = useState(false);
   const [socket, setSocket] = useState();
-  const [detectionRunning, setDetectionRunning] = useState(0);
+  const [jumpDetectionRunning, setJumpDetectionRunning] = useState(false);
+
+  const toggleLoading = (prevLogs, type) => {
+    const oppositeType = type === "jumpmaster" ? "champion" : "jumpmaster";
+    const reverseArr = [...prevLogs].reverse();
+
+    // if reverseArr contains oppositeType, change it's loading status to false
+    if (reverseArr.find((log) => log.type === oppositeType)) {
+      const index = reverseArr.findIndex((log) => log.type === oppositeType);
+      reverseArr[index].loading = false;
+    }
+
+    const updatedArr = reverseArr.reverse();
+    return updatedArr;
+  };
+
+  const removeAllLoadingStates = () => {
+    setLogs((prevLogs) =>
+      prevLogs.map((log) => {
+        if (log?.loading === true) {
+          log.loading = false;
+          return log;
+        }
+        return log;
+      }));
+  };
 
   useEffect(() => {
     const s = io(`http://localhost:${port}`);
@@ -33,17 +58,30 @@ function App() {
       console.log("Disconnected to socket");
     });
 
+    s.on("stop_loading", () => {
+      removeAllLoadingStates();
+    });
+
     s.on("logs", (log) => {
       const [time] = new Date().toTimeString().split(" ");
-      const fullLog = { time, log };
+      const fullLog = { time, message: log };
       setLogs((prevLogs) => [...prevLogs, fullLog]);
     });
 
-    s.on("jumpmaster_log", (message) => {
-      if (!detectionRunning && message.status === "start") {
-        setDetectionRunning(true);
-      } else if (message.status === "end") {
-        setDetectionRunning(false);
+    s.on("detection_log", (detectionLog) => {
+      const [time] = new Date().toTimeString().split(" ");
+      const { type, message, loading } = detectionLog;
+      const fullLog = { time, message, loading, type };
+
+      setLogs((prevLogs) => {
+        const updatedArr = toggleLoading(prevLogs, type);
+        return [...updatedArr, fullLog];
+      });
+
+      if (type === "jumpmaster" && loading === true) {
+        setJumpDetectionRunning(true);
+      } else if (type === "champion" && loading === true) {
+        setJumpDetectionRunning(false);
       }
     });
 
@@ -56,6 +94,7 @@ function App() {
     if (status === true) {
       socket.emit("toggle", { type: "startAndStop", status: false });
       setStatus(false);
+      removeAllLoadingStates();
     } else {
       socket.emit("toggle", { type: "startAndStop", status: true });
       setStatus(true);
@@ -99,7 +138,13 @@ function App() {
           />
         </div>
         <div className={styles.col}>
-          <Terminal logs={logs} setLogs={setLogs} detectionRunning={detectionRunning} />
+          <Terminal
+            logs={logs}
+            setLogs={setLogs}
+            jumpDetectionRunning={jumpDetectionRunning}
+            setJumpDetectionRunning={setJumpDetectionRunning}
+            removeAllLoadingStates={removeAllLoadingStates}
+          />
         </div>
       </div>
     </div>

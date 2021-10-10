@@ -107,4 +107,15 @@ $window-expand: #c3e88d;
   .scrollbar::-webkit-scrollbar-button {
     display: none;
   }
+
+  .terminalMessage {
+    div {
+      display: inline-block !important;
+    }
+
+    .loadingSpinner {
+      margin-right: 7px;
+      margin-left: 2px;
+    }
+  }
 }
