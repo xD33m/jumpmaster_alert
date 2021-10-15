@@ -8,8 +8,8 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request
 import sys
 from engineio.async_drivers import threading  # needed for pyinstaller
-from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandler
+# from gevent.pywsgi import WSGIServer
+# from geventwebsocket.handler import WebSocketHandler
 
 
 app = Flask(__name__)
@@ -115,13 +115,13 @@ def default_error_handler(e):
 
 
 def run_server():
-    if app_config["debug"] is True:
-        socketio.run(app, debug=True,
+    # if app_config["debug"] is True:
+    socketio.run(app, debug=True,
                      host=app_config["host"], port=int(app_config["port"]))
-    else:
-        server = WSGIServer(('0.0.0.0', int(app_config["port"])), app,
-                            handler_class=WebSocketHandler)
-        server.serve_forever()
+    # else:
+    #     server = WSGIServer(('0.0.0.0', int(app_config["port"])), app,
+    #                         handler_class=WebSocketHandler)
+    #     server.serve_forever()
 
 
 if __name__ == "__main__":
